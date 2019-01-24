@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D9F609EE-67DA-46C1-A374-651B79A28CAC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DBMapper</RootNamespace>
+    <AssemblyName>dbMapper</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>data_view.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>DBMapper.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="adodb, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="3rdParties\CSVReader.cs" />
+    <Compile Include="3rdParties\ExpressProfiler\EventList.cs" />
+    <Compile Include="3rdParties\ExpressProfiler\FindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\FindForm.Designer.cs">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\ListViewNF.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\SQLProfiler.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\SQLProfiler.designer.cs">
+      <DependentUpon>SQLProfiler.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\RawTraceReader.cs" />
+    <Compile Include="3rdParties\ExpressProfiler\TraceProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\ExpressProfiler\TraceProperties.designer.cs">
+      <DependentUpon>TraceProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\StringConverter.cs" />
+    <Compile Include="DataObjectView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataObjectView.Designer.cs">
+      <DependentUpon>DataObjectView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataSearch.cs" />
+    <Compile Include="ExcelExport.cs" />
+    <Compile Include="FastColoredTextBoxExtensions.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\AutocompleteItem.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\AutocompleteMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\Bookmarks.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Char.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\CommandManager.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Commands.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\DocumentMap.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\EncodingDetector.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\ExportToHTML.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\ExportToRTF.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\FastColoredTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\FileTextSource.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\FindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\FindForm.designer.cs">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\GoToForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\GoToForm.designer.cs">
+      <DependentUpon>GoToForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\Hints.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Hotkeys.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\HotkeysEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\HotkeysEditorForm.Designer.cs">
+      <DependentUpon>HotkeysEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\LimitedStack.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Line.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\LinesAccessor.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\MacrosManager.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Place.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\PlatformType.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\Range.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\ReplaceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\ReplaceForm.designer.cs">
+      <DependentUpon>ReplaceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\Ruler.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\Ruler.designer.cs">
+      <DependentUpon>Ruler.cs</DependentUpon>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\Style.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\SyntaxDescriptor.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\SyntaxHighlighter.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\TextSource.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\TypeDescriptor.cs" />
+    <Compile Include="3rdParties\FastColoredTextBox\UnfocusablePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="3rdParties\FastColoredTextBox\VisualMarker.cs" />
+    <Compile Include="FrmDBMapper.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDBMapper.DataSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDBMapper.Designer.cs">
+      <DependentUpon>FrmDBMapper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Hotkey.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsClipboard.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsComctl32.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsEnums.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsGdi.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsMenu.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsShell.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsShlwapi.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsStructs.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsUser32.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsUxTheme.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\APIsWndProc.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\ColorUtil.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\COMInterfaces.cs" />
+    <Compile Include="3rdParties\TreeListView\APIs\TextUtil.cs" />
+    <Compile Include="3rdParties\TreeListView\TreeListView\Forms\TreeListViewItemsEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="3rdParties\TreeListView\TreeListView\ITreeListViewItemComparer.cs" />
+    <Compile Include="3rdParties\TreeListView\TreeListView\SelectedTreeListViewItemCollection.cs" />
+    <Compile Include="3rdParties\TreeListView\TreeListView\TreeListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="3rdParties\TreeListView\TreeListView\TreeListViewItem.cs" />
+    <Compile Include="3rdParties\TreeListView\TreeListView\TreeListViewItemCollection.cs" />
+    <Compile Include="3rdParties\TreeListView\TreeListView\TreeListViewSubItemEdit.cs" />
+    <EmbeddedResource Include="3rdParties\ExpressProfiler\FindForm.resx">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\ExpressProfiler\SQLProfiler.resx">
+      <DependentUpon>SQLProfiler.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\ExpressProfiler\TraceProperties.resx">
+      <DependentUpon>TraceProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataObjectView.resx">
+      <DependentUpon>DataObjectView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\FastColoredTextBox\FastColoredTextBox.resx">
+      <DependentUpon>FastColoredTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\FastColoredTextBox\FindForm.resx">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\FastColoredTextBox\GoToForm.resx">
+      <DependentUpon>GoToForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\FastColoredTextBox\HotkeysEditorForm.resx">
+      <DependentUpon>HotkeysEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\FastColoredTextBox\ReplaceForm.resx">
+      <DependentUpon>ReplaceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDBMapper.resx">
+      <DependentUpon>FrmDBMapper.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="3rdParties\TreeListView\TreeListView\Forms\TreeListViewItemsEditor.resx">
+      <DependentUpon>TreeListViewItemsEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\TreeListView\TreeListView\TreeListView.resx">
+      <DependentUpon>TreeListView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="3rdParties\TreeListView\TreeListView\TreeListViewSubItemEdit.resx">
+      <DependentUpon>TreeListViewSubItemEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="dbMapper.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\document_find.png" />
+    <None Include="Resources\disk_blue.png" />
+    <None Include="Resources\document_out.png" />
+    <None Include="Resources\text_code.png" />
+    <None Include="Resources\funnel.png" />
+    <None Include="Resources\keyboard_key.png" />
+    <None Include="Resources\preferences.png" />
+    <None Include="Resources\imStop.png" />
+    <None Include="Resources\imStart.png" />
+    <None Include="Resources\imScroll.png" />
+    <None Include="Resources\imPause.png" />
+    <None Include="Resources\imClear.png" />
+    <None Include="Resources\media_step_back.png" />
+    <None Include="Resources\media_step_forward.png" />
+    <Content Include="data_view.ico" />
+    <Content Include="3rdParties\TreeListView\TreeListView\Icons\Minus.gif" />
+    <Content Include="3rdParties\TreeListView\TreeListView\Icons\Plus.gif" />
+    <Content Include="3rdParties\TreeListView\TreeListView\System.Windows.Forms.TreeListView.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MSDASC">
+      <Guid>{2206CEB0-19C1-11D1-89E0-00C04FD7A829}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
