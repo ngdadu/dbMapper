@@ -1278,8 +1278,18 @@ insert into @parameters values
                     }
                     else
                     {
+                        var sb = new StringBuilder();
                         var delim = column.HasDelimeter ? "'" : "";
-                        colValues[col] = string.Format("{0}{1}{0}", delim, value.ToString().Replace("'", "''"));
+                        if (column.HasDelimeter)
+                        {
+                            foreach (char c in value.ToString())
+                                if (c < 32) sb.Append("' + CHAR(").Append((int)c).Append(") + '"); else if (c == '\'') sb.Append("''"); else sb.Append(c);
+                        }
+                        else
+                        {
+                            sb.Append(value.ToString().Replace("'", "''"));
+                        }
+                        colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
                     }
                 }
                 rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + ((row + 1) % 1000 == 0 ? ";" : ""));
