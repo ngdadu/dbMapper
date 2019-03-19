@@ -1266,7 +1266,7 @@ insert into @parameters values
                     }
                     else if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
                     {
-                        colValues[col] = string.Format("'{0:O}'", value);
+                        colValues[col] = string.Format("'{0:s}.{1:000}'", value, ((DateTime)value).Millisecond);
                     }
                     else if (column.TypeName == "bit")
                     {
