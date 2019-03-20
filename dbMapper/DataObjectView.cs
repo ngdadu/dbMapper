@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using FastColoredTextBoxNS;
 using System.Xml;
 using System.IO;
+using System.Globalization;
 
 namespace DBMapper
 {
@@ -208,6 +209,7 @@ namespace DBMapper
                         catch { }
                         //if (fieldDescriptions.Count == 0) FieldDescriptions = null;
                     }
+                    listDsScriptWhere.Items.Clear();
                     using (var cmd = new SqlCommand(queryText, conn))
                     {
                         using (var reader = cmd.ExecuteReader())
@@ -285,17 +287,17 @@ namespace DBMapper
                                                 columnData.DataType = typeof(long);
                                                 break;
                                             case "smallint":
-                                                if (cname.ToLower().StartsWith("flag_")) goto case "bit";
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
                                                 tname = "short";
                                                 columnData.DataType = typeof(short);
                                                 break;
                                             case "tinyint":
-                                                if (cname.ToLower().StartsWith("flag_")) goto case "bit";
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
                                                 tname = "byte";
                                                 columnData.DataType = typeof(byte);
                                                 break;
                                             case "int":
-                                                if (cname.ToLower().StartsWith("flag_")) goto case "bit";
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
                                                 columnData.DataType = typeof(Int32);
                                                 break;
                                             case "bit":
@@ -317,7 +319,7 @@ namespace DBMapper
                                         columnData.AllowDBNull = canNull;
                                         tname += canNull ? nullableSuffix : "";
                                         var item = new ListViewItem(cname);
-                                        if (!String.IsNullOrEmpty(fulltextSearch) && cname.ToUpper().Contains(fulltextSearch.ToUpper()))
+                                        if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
                                         {
                                             item.BackColor = SystemColors.Info;
                                             item.ForeColor = SystemColors.InfoText;
@@ -344,6 +346,17 @@ namespace DBMapper
                                         resultText += cCode;
                                         item.Tag = cCode;
                                         item.Checked = true;
+
+                                        var datitem = listDsScriptWhere.Items.Add(cname);
+                                        datitem.SubItems.Add(tname);
+                                        datitem.Tag = new DataSearchColumn
+                                        {
+                                            Name = cname,
+                                            TypeName = sqltype,
+                                            MaxLength = -1,
+                                            Index = datitem.Index + 1,
+                                            RowsCount = -1
+                                        };
                                         try
                                         {
                                             tableData.Columns.Add(columnData);
@@ -635,6 +648,91 @@ namespace DBMapper
                 file.Write(gridData.CurrentCell.Value.ToString());
             }
             MessageBox.Show(String.Format("{0} written to file: {1}", gridData.CurrentCell.OwningColumn.HeaderText, saveFileDialog1.FileName));
+        }
+
+        private void listDsScriptWhere_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            var sql = @"declare @parameters table
+(
+     {0}
+);
+insert into @parameters values
+     {1};";
+            var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
+            if (columns.Count == 0 || sourceData.Count == 0)
+            {
+                txtDsScriptWhere.Text = "";
+                return;
+            }
+            var columnsheader = string.Join("\r\n    ,", columns.OrderBy(c => c.Index).Select(c => c.Name + " \t" + c.FullTypeName).ToArray());
+            var colValues = new string[columns.Count];
+            var rowValues = new List<string>();
+            var table = sourceData.DataSource as DataTable;
+            for (var row = 0; row < table.Rows.Count; row++)
+            {
+                if (row > 0 && row % 1000 == 0)
+                {
+                    rowValues.Add(@"insert into @parameters values");
+                }
+                var datarow = table.Rows[row];
+                for (var col = 0; col < columns.Count; col++)
+                {
+                    var column = columns[col];
+                    var value = datarow[column.Index - 1];
+                    if (value == null || DBNull.Value.Equals(value))
+                    {
+                        colValues[col] = "NULL";
+                    }
+                    else if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
+                    {
+                        colValues[col] = string.Format("'{0:s}.{1:000}'", value, ((DateTime)value).Millisecond);
+                    }
+                    else if (column.TypeName == "bit")
+                    {
+                        colValues[col] = (bool)value ? "1" : "0";
+                    }
+                    else if (DataSearchColumn.DataTypes_Numbers.IndexOf(column.TypeName) >= 0)
+                    {
+                        colValues[col] = string.Format(CultureInfo.InvariantCulture.NumberFormat, "{0}", value); //.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                    }
+                    else
+                    {
+                        var sb = new StringBuilder();
+                        var delim = column.HasDelimeter ? "'" : "";
+                        if (column.HasDelimeter)
+                        {
+                            var chars = value.ToString().ToCharArray();
+                            for (var chi = 0; chi < chars.Length; chi++)
+                            {
+                                var c = chars[chi];
+                                if (c < 32)
+                                {
+                                    var cp = chi > 0 ? chars[chi - 1] : '0';
+                                    var cn = chi < chars.Length - 1 ? chars[chi + 1] : '0';
+                                    if (cp >= 32) sb.Append("'"); 
+                                    sb.Append(" + CHAR(").Append((int)c);
+                                    sb.Append(cn < 32 ? ")" : ") + '");
+                                }
+                                else if (c == '\'')
+                                {
+                                    sb.Append("''");
+                                }
+                                else
+                                {
+                                    sb.Append(c);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sb.Append(value.ToString().Replace("'", "''"));
+                        }
+                        colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
+                    }
+                }
+                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + ((row + 1) % 1000 == 0 ? ";" : ""));
+            }
+            txtDsScriptWhere.Text = string.Format(sql, columnsheader, string.Join("\r\n", rowValues));
         }
     }
 }

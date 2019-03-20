@@ -29,14 +29,17 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataObjectView));
             this.tabMain = new System.Windows.Forms.TabControl();
             this.pageScript = new System.Windows.Forms.TabPage();
             this.containerScript = new System.Windows.Forms.SplitContainer();
+            this.txtObjScript = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.txtObjScript2 = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.mapObjScript = new FastColoredTextBoxNS.DocumentMap();
             this.pageFields = new System.Windows.Forms.TabPage();
             this.lvResult = new System.Windows.Forms.ListView();
             this.coulmnFieldName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -46,6 +49,7 @@
             this.columnSQLType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pageCode = new System.Windows.Forms.TabPage();
+            this.txtResult = new FastColoredTextBoxNS.FastColoredTextBox();
             this.gridData = new System.Windows.Forms.DataGridView();
             this.sourceData = new System.Windows.Forms.BindingSource(this.components);
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
@@ -66,24 +70,31 @@
             this.cbTextType = new System.Windows.Forms.ToolStripComboBox();
             this.btnWordWrap = new System.Windows.Forms.ToolStripButton();
             this.btnFormattedText = new System.Windows.Forms.ToolStripButton();
+            this.btnSaveCell = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtObjScript = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.txtObjScript2 = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.mapObjScript = new FastColoredTextBoxNS.DocumentMap();
-            this.txtResult = new FastColoredTextBoxNS.FastColoredTextBox();
             this.txtDataField = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.btnSaveCell = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.tabData = new System.Windows.Forms.TabControl();
+            this.pageDataList = new System.Windows.Forms.TabPage();
+            this.pageDataScript = new System.Windows.Forms.TabPage();
+            this.containerDsScriptWhere = new System.Windows.Forms.SplitContainer();
+            this.listDsScriptWhere = new System.Windows.Forms.ListView();
+            this.columnDsScriptWhereName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnDsScriptWhereType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.txtDsScriptWhere = new FastColoredTextBoxNS.FastColoredTextBox();
             this.tabMain.SuspendLayout();
             this.pageScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containerScript)).BeginInit();
             this.containerScript.Panel1.SuspendLayout();
             this.containerScript.Panel2.SuspendLayout();
             this.containerScript.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript2)).BeginInit();
             this.pageFields.SuspendLayout();
             this.pageCode.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtResult)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourceData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
@@ -93,14 +104,19 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).BeginInit();
+            this.tabData.SuspendLayout();
+            this.pageDataList.SuspendLayout();
+            this.pageDataScript.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.containerDsScriptWhere)).BeginInit();
+            this.containerDsScriptWhere.Panel1.SuspendLayout();
+            this.containerDsScriptWhere.Panel2.SuspendLayout();
+            this.containerDsScriptWhere.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).BeginInit();
             this.SuspendLayout();
             // 
             // tabMain
@@ -148,6 +164,97 @@
             this.containerScript.SplitterDistance = 25;
             this.containerScript.SplitterWidth = 14;
             this.containerScript.TabIndex = 3;
+            // 
+            // txtObjScript
+            // 
+            this.txtObjScript.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtObjScript.AutoIndentCharsPatterns = "";
+            this.txtObjScript.AutoScrollMinSize = new System.Drawing.Size(0, 14);
+            this.txtObjScript.BackBrush = null;
+            this.txtObjScript.CharHeight = 14;
+            this.txtObjScript.CharWidth = 8;
+            this.txtObjScript.CommentPrefix = "--";
+            this.txtObjScript.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtObjScript.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtObjScript.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript.IsReplaceMode = false;
+            this.txtObjScript.Language = FastColoredTextBoxNS.Language.SQL;
+            this.txtObjScript.LeftBracket = '(';
+            this.txtObjScript.Location = new System.Drawing.Point(0, 0);
+            this.txtObjScript.Name = "txtObjScript";
+            this.txtObjScript.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtObjScript.ReadOnly = true;
+            this.txtObjScript.RightBracket = ')';
+            this.txtObjScript.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtObjScript.ShowScrollBars = false;
+            this.txtObjScript.Size = new System.Drawing.Size(655, 25);
+            this.txtObjScript.TabIndex = 0;
+            this.txtObjScript.WordWrap = true;
+            this.txtObjScript.Zoom = 100;
+            this.txtObjScript.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
+            this.txtObjScript.Enter += new System.EventHandler(this.ScriptEditor_Enter);
+            // 
+            // txtObjScript2
+            // 
+            this.txtObjScript2.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtObjScript2.AutoIndentCharsPatterns = "";
+            this.txtObjScript2.AutoScrollMinSize = new System.Drawing.Size(0, 14);
+            this.txtObjScript2.BackBrush = null;
+            this.txtObjScript2.CharHeight = 14;
+            this.txtObjScript2.CharWidth = 8;
+            this.txtObjScript2.CommentPrefix = "--";
+            this.txtObjScript2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtObjScript2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtObjScript2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript2.IsReplaceMode = false;
+            this.txtObjScript2.Language = FastColoredTextBoxNS.Language.SQL;
+            this.txtObjScript2.LeftBracket = '(';
+            this.txtObjScript2.Location = new System.Drawing.Point(0, 0);
+            this.txtObjScript2.Name = "txtObjScript2";
+            this.txtObjScript2.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtObjScript2.ReadOnly = true;
+            this.txtObjScript2.RightBracket = ')';
+            this.txtObjScript2.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtObjScript2.ShowScrollBars = false;
+            this.txtObjScript2.Size = new System.Drawing.Size(655, 151);
+            this.txtObjScript2.SourceTextBox = this.txtObjScript;
+            this.txtObjScript2.TabIndex = 0;
+            this.txtObjScript2.WordWrap = true;
+            this.txtObjScript2.Zoom = 100;
+            this.txtObjScript2.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
+            this.txtObjScript2.Enter += new System.EventHandler(this.ScriptEditor_Enter);
+            // 
+            // mapObjScript
+            // 
+            this.mapObjScript.Dock = System.Windows.Forms.DockStyle.Right;
+            this.mapObjScript.ForeColor = System.Drawing.Color.Maroon;
+            this.mapObjScript.Location = new System.Drawing.Point(658, 3);
+            this.mapObjScript.Name = "mapObjScript";
+            this.mapObjScript.Scale = 0.2F;
+            this.mapObjScript.Size = new System.Drawing.Size(79, 180);
+            this.mapObjScript.TabIndex = 4;
+            this.mapObjScript.Target = this.txtObjScript;
+            this.mapObjScript.Text = "SQL";
             // 
             // pageFields
             // 
@@ -223,46 +330,85 @@
             this.pageCode.Text = "C#";
             this.pageCode.UseVisualStyleBackColor = true;
             // 
+            // txtResult
+            // 
+            this.txtResult.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtResult.AutoIndentCharsPatterns = "\r\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\r\n^\\s*(case|default)\\s*[^:]" +
+    "*(?<range>:)\\s*(?<range>[^;]+);\r\n";
+            this.txtResult.AutoScrollMinSize = new System.Drawing.Size(2, 14);
+            this.txtResult.BackBrush = null;
+            this.txtResult.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.txtResult.CharHeight = 14;
+            this.txtResult.CharWidth = 8;
+            this.txtResult.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtResult.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtResult.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.txtResult.IsReplaceMode = false;
+            this.txtResult.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.txtResult.LeftBracket = '(';
+            this.txtResult.LeftBracket2 = '{';
+            this.txtResult.Location = new System.Drawing.Point(3, 3);
+            this.txtResult.Name = "txtResult";
+            this.txtResult.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtResult.RightBracket = ')';
+            this.txtResult.RightBracket2 = '}';
+            this.txtResult.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtResult.Size = new System.Drawing.Size(734, 180);
+            this.txtResult.TabIndex = 0;
+            this.txtResult.Zoom = 100;
+            this.txtResult.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
+            // 
             // gridData
             // 
             this.gridData.AllowUserToAddRows = false;
             this.gridData.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.gridData.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.gridData.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
             this.gridData.AutoGenerateColumns = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridData.DataSource = this.sourceData;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridData.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridData.DefaultCellStyle = dataGridViewCellStyle7;
             this.gridData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridData.Location = new System.Drawing.Point(0, 0);
             this.gridData.Name = "gridData";
             this.gridData.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridData.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridData.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridData.ShowCellErrors = false;
             this.gridData.ShowRowErrors = false;
-            this.gridData.Size = new System.Drawing.Size(506, 154);
+            this.gridData.Size = new System.Drawing.Size(496, 122);
             this.gridData.TabIndex = 1;
             this.gridData.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.gridData_CellFormatting);
             this.gridData.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.gridData_CellPainting);
@@ -297,14 +443,14 @@
             this.btnWordWrap,
             this.btnFormattedText,
             this.btnSaveCell});
-            this.bindingNavigator1.Location = new System.Drawing.Point(0, 0);
+            this.bindingNavigator1.Location = new System.Drawing.Point(3, 3);
             this.bindingNavigator1.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
             this.bindingNavigator1.MoveLastItem = this.bindingNavigatorMoveLastItem;
             this.bindingNavigator1.MoveNextItem = this.bindingNavigatorMoveNextItem;
             this.bindingNavigator1.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
             this.bindingNavigator1.Name = "bindingNavigator1";
             this.bindingNavigator1.PositionItem = this.bindingNavigatorPositionItem;
-            this.bindingNavigator1.Size = new System.Drawing.Size(748, 25);
+            this.bindingNavigator1.Size = new System.Drawing.Size(734, 25);
             this.bindingNavigator1.TabIndex = 0;
             this.bindingNavigator1.Text = "bindingNavigator1";
             // 
@@ -451,10 +597,19 @@
             this.btnFormattedText.Size = new System.Drawing.Size(87, 19);
             this.btnFormattedText.Text = "FormattedText";
             // 
+            // btnSaveCell
+            // 
+            this.btnSaveCell.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSaveCell.Image = global::DBMapper.Properties.Resources.disk_blue;
+            this.btnSaveCell.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveCell.Name = "btnSaveCell";
+            this.btnSaveCell.Size = new System.Drawing.Size(23, 20);
+            this.btnSaveCell.Text = "Save current cell to file";
+            this.btnSaveCell.Click += new System.EventHandler(this.btnSaveCell_Click);
+            // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.splitContainer2);
-            this.panel1.Controls.Add(this.bindingNavigator1);
+            this.panel1.Controls.Add(this.tabData);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -464,7 +619,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer2.Location = new System.Drawing.Point(3, 28);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -474,160 +629,10 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtDataField);
-            this.splitContainer2.Size = new System.Drawing.Size(748, 154);
-            this.splitContainer2.SplitterDistance = 506;
+            this.splitContainer2.Size = new System.Drawing.Size(734, 122);
+            this.splitContainer2.SplitterDistance = 496;
             this.splitContainer2.TabIndex = 2;
             this.splitContainer2.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.tabMain);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(748, 395);
-            this.splitContainer1.SplitterDistance = 212;
-            this.splitContainer1.TabIndex = 5;
-            this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
-            // 
-            // txtObjScript
-            // 
-            this.txtObjScript.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.txtObjScript.AutoIndentCharsPatterns = "";
-            this.txtObjScript.AutoScrollMinSize = new System.Drawing.Size(0, 14);
-            this.txtObjScript.BackBrush = null;
-            this.txtObjScript.CharHeight = 14;
-            this.txtObjScript.CharWidth = 8;
-            this.txtObjScript.CommentPrefix = "--";
-            this.txtObjScript.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtObjScript.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.txtObjScript.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtObjScript.Font = new System.Drawing.Font("Courier New", 9.75F);
-            this.txtObjScript.IsReplaceMode = false;
-            this.txtObjScript.Language = FastColoredTextBoxNS.Language.SQL;
-            this.txtObjScript.LeftBracket = '(';
-            this.txtObjScript.Location = new System.Drawing.Point(0, 0);
-            this.txtObjScript.Name = "txtObjScript";
-            this.txtObjScript.Paddings = new System.Windows.Forms.Padding(0);
-            this.txtObjScript.ReadOnly = true;
-            this.txtObjScript.RightBracket = ')';
-            this.txtObjScript.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtObjScript.ShowScrollBars = false;
-            this.txtObjScript.Size = new System.Drawing.Size(655, 25);
-            this.txtObjScript.TabIndex = 0;
-            this.txtObjScript.WordWrap = true;
-            this.txtObjScript.Zoom = 100;
-            this.txtObjScript.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
-            this.txtObjScript.Enter += new System.EventHandler(this.ScriptEditor_Enter);
-            // 
-            // txtObjScript2
-            // 
-            this.txtObjScript2.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.txtObjScript2.AutoIndentCharsPatterns = "";
-            this.txtObjScript2.AutoScrollMinSize = new System.Drawing.Size(0, 14);
-            this.txtObjScript2.BackBrush = null;
-            this.txtObjScript2.CharHeight = 14;
-            this.txtObjScript2.CharWidth = 8;
-            this.txtObjScript2.CommentPrefix = "--";
-            this.txtObjScript2.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtObjScript2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.txtObjScript2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtObjScript2.Font = new System.Drawing.Font("Courier New", 9.75F);
-            this.txtObjScript2.IsReplaceMode = false;
-            this.txtObjScript2.Language = FastColoredTextBoxNS.Language.SQL;
-            this.txtObjScript2.LeftBracket = '(';
-            this.txtObjScript2.Location = new System.Drawing.Point(0, 0);
-            this.txtObjScript2.Name = "txtObjScript2";
-            this.txtObjScript2.Paddings = new System.Windows.Forms.Padding(0);
-            this.txtObjScript2.ReadOnly = true;
-            this.txtObjScript2.RightBracket = ')';
-            this.txtObjScript2.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtObjScript2.ShowScrollBars = false;
-            this.txtObjScript2.Size = new System.Drawing.Size(655, 151);
-            this.txtObjScript2.SourceTextBox = this.txtObjScript;
-            this.txtObjScript2.TabIndex = 0;
-            this.txtObjScript2.WordWrap = true;
-            this.txtObjScript2.Zoom = 100;
-            this.txtObjScript2.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
-            this.txtObjScript2.Enter += new System.EventHandler(this.ScriptEditor_Enter);
-            // 
-            // mapObjScript
-            // 
-            this.mapObjScript.Dock = System.Windows.Forms.DockStyle.Right;
-            this.mapObjScript.ForeColor = System.Drawing.Color.Maroon;
-            this.mapObjScript.Location = new System.Drawing.Point(658, 3);
-            this.mapObjScript.Name = "mapObjScript";
-            this.mapObjScript.Scale = 0.2F;
-            this.mapObjScript.Size = new System.Drawing.Size(79, 180);
-            this.mapObjScript.TabIndex = 4;
-            this.mapObjScript.Target = this.txtObjScript;
-            this.mapObjScript.Text = "SQL";
-            // 
-            // txtResult
-            // 
-            this.txtResult.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.txtResult.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\n^\\s*(case|default)\\s*[^:]*(" +
-    "?<range>:)\\s*(?<range>[^;]+);\n";
-            this.txtResult.AutoScrollMinSize = new System.Drawing.Size(2, 14);
-            this.txtResult.BackBrush = null;
-            this.txtResult.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
-            this.txtResult.CharHeight = 14;
-            this.txtResult.CharWidth = 8;
-            this.txtResult.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtResult.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtResult.IsReplaceMode = false;
-            this.txtResult.Language = FastColoredTextBoxNS.Language.CSharp;
-            this.txtResult.LeftBracket = '(';
-            this.txtResult.LeftBracket2 = '{';
-            this.txtResult.Location = new System.Drawing.Point(3, 3);
-            this.txtResult.Name = "txtResult";
-            this.txtResult.Paddings = new System.Windows.Forms.Padding(0);
-            this.txtResult.RightBracket = ')';
-            this.txtResult.RightBracket2 = '}';
-            this.txtResult.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtResult.Size = new System.Drawing.Size(734, 180);
-            this.txtResult.TabIndex = 0;
-            this.txtResult.Zoom = 100;
-            this.txtResult.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
             // 
             // txtDataField
             // 
@@ -649,26 +654,146 @@
             this.txtDataField.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDataField.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDataField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDataField.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDataField.IsReplaceMode = false;
             this.txtDataField.Location = new System.Drawing.Point(0, 0);
             this.txtDataField.Name = "txtDataField";
             this.txtDataField.Paddings = new System.Windows.Forms.Padding(0);
             this.txtDataField.ReadOnly = true;
             this.txtDataField.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDataField.Size = new System.Drawing.Size(238, 154);
+            this.txtDataField.Size = new System.Drawing.Size(234, 122);
             this.txtDataField.TabIndex = 0;
             this.txtDataField.Zoom = 100;
             // 
-            // btnSaveCell
+            // splitContainer1
             // 
-            this.btnSaveCell.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSaveCell.Image = global::DBMapper.Properties.Resources.disk_blue;
-            this.btnSaveCell.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSaveCell.Name = "btnSaveCell";
-            this.btnSaveCell.Size = new System.Drawing.Size(23, 20);
-            this.btnSaveCell.Text = "Save current cell to file";
-            this.btnSaveCell.Click += new System.EventHandler(this.btnSaveCell_Click);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tabMain);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Size = new System.Drawing.Size(748, 395);
+            this.splitContainer1.SplitterDistance = 212;
+            this.splitContainer1.TabIndex = 5;
+            this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
+            // 
+            // tabData
+            // 
+            this.tabData.Controls.Add(this.pageDataList);
+            this.tabData.Controls.Add(this.pageDataScript);
+            this.tabData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabData.Location = new System.Drawing.Point(0, 0);
+            this.tabData.Name = "tabData";
+            this.tabData.SelectedIndex = 0;
+            this.tabData.Size = new System.Drawing.Size(748, 179);
+            this.tabData.TabIndex = 2;
+            // 
+            // pageDataList
+            // 
+            this.pageDataList.Controls.Add(this.splitContainer2);
+            this.pageDataList.Controls.Add(this.bindingNavigator1);
+            this.pageDataList.Location = new System.Drawing.Point(4, 22);
+            this.pageDataList.Name = "pageDataList";
+            this.pageDataList.Padding = new System.Windows.Forms.Padding(3);
+            this.pageDataList.Size = new System.Drawing.Size(740, 153);
+            this.pageDataList.TabIndex = 0;
+            this.pageDataList.Text = "Daten";
+            this.pageDataList.UseVisualStyleBackColor = true;
+            // 
+            // pageDataScript
+            // 
+            this.pageDataScript.Controls.Add(this.containerDsScriptWhere);
+            this.pageDataScript.Location = new System.Drawing.Point(4, 22);
+            this.pageDataScript.Name = "pageDataScript";
+            this.pageDataScript.Padding = new System.Windows.Forms.Padding(3);
+            this.pageDataScript.Size = new System.Drawing.Size(740, 153);
+            this.pageDataScript.TabIndex = 1;
+            this.pageDataScript.Text = "Script";
+            this.pageDataScript.UseVisualStyleBackColor = true;
+            // 
+            // containerDsScriptWhere
+            // 
+            this.containerDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.containerDsScriptWhere.Location = new System.Drawing.Point(3, 3);
+            this.containerDsScriptWhere.Name = "containerDsScriptWhere";
+            // 
+            // containerDsScriptWhere.Panel1
+            // 
+            this.containerDsScriptWhere.Panel1.Controls.Add(this.listDsScriptWhere);
+            // 
+            // containerDsScriptWhere.Panel2
+            // 
+            this.containerDsScriptWhere.Panel2.Controls.Add(this.txtDsScriptWhere);
+            this.containerDsScriptWhere.Size = new System.Drawing.Size(734, 147);
+            this.containerDsScriptWhere.SplitterDistance = 175;
+            this.containerDsScriptWhere.TabIndex = 0;
+            // 
+            // listDsScriptWhere
+            // 
+            this.listDsScriptWhere.CheckBoxes = true;
+            this.listDsScriptWhere.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnDsScriptWhereName,
+            this.columnDsScriptWhereType});
+            this.listDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listDsScriptWhere.FullRowSelect = true;
+            this.listDsScriptWhere.HideSelection = false;
+            this.listDsScriptWhere.Location = new System.Drawing.Point(0, 0);
+            this.listDsScriptWhere.Name = "listDsScriptWhere";
+            this.listDsScriptWhere.Size = new System.Drawing.Size(175, 147);
+            this.listDsScriptWhere.TabIndex = 0;
+            this.listDsScriptWhere.UseCompatibleStateImageBehavior = false;
+            this.listDsScriptWhere.View = System.Windows.Forms.View.Details;
+            this.listDsScriptWhere.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listDsScriptWhere_ItemChecked);
+            // 
+            // columnDsScriptWhereName
+            // 
+            this.columnDsScriptWhereName.Text = "Name";
+            this.columnDsScriptWhereName.Width = 136;
+            // 
+            // columnDsScriptWhereType
+            // 
+            this.columnDsScriptWhereType.Text = "Type";
+            this.columnDsScriptWhereType.Width = 100;
+            // 
+            // txtDsScriptWhere
+            // 
+            this.txtDsScriptWhere.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtDsScriptWhere.AutoIndentCharsPatterns = "";
+            this.txtDsScriptWhere.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.txtDsScriptWhere.BackBrush = null;
+            this.txtDsScriptWhere.CharHeight = 14;
+            this.txtDsScriptWhere.CharWidth = 8;
+            this.txtDsScriptWhere.CommentPrefix = "--";
+            this.txtDsScriptWhere.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtDsScriptWhere.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDsScriptWhere.IsReplaceMode = false;
+            this.txtDsScriptWhere.Language = FastColoredTextBoxNS.Language.SQL;
+            this.txtDsScriptWhere.LeftBracket = '(';
+            this.txtDsScriptWhere.Location = new System.Drawing.Point(0, 0);
+            this.txtDsScriptWhere.Name = "txtDsScriptWhere";
+            this.txtDsScriptWhere.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtDsScriptWhere.RightBracket = ')';
+            this.txtDsScriptWhere.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDsScriptWhere.Size = new System.Drawing.Size(555, 147);
+            this.txtDsScriptWhere.TabIndex = 0;
+            this.txtDsScriptWhere.Zoom = 100;
             // 
             // DataObjectView
             // 
@@ -683,27 +808,35 @@
             this.containerScript.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.containerScript)).EndInit();
             this.containerScript.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript2)).EndInit();
             this.pageFields.ResumeLayout(false);
             this.pageCode.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtResult)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourceData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).EndInit();
             this.bindingNavigator1.ResumeLayout(false);
             this.bindingNavigator1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtObjScript2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).EndInit();
+            this.tabData.ResumeLayout(false);
+            this.pageDataList.ResumeLayout(false);
+            this.pageDataList.PerformLayout();
+            this.pageDataScript.ResumeLayout(false);
+            this.containerDsScriptWhere.Panel1.ResumeLayout(false);
+            this.containerDsScriptWhere.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.containerDsScriptWhere)).EndInit();
+            this.containerDsScriptWhere.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -752,5 +885,13 @@
         private System.Windows.Forms.ToolStripComboBox cboDataColumnFrozen;
         private System.Windows.Forms.ToolStripButton btnSaveCell;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.TabControl tabData;
+        private System.Windows.Forms.TabPage pageDataList;
+        private System.Windows.Forms.TabPage pageDataScript;
+        private System.Windows.Forms.SplitContainer containerDsScriptWhere;
+        private System.Windows.Forms.ListView listDsScriptWhere;
+        private System.Windows.Forms.ColumnHeader columnDsScriptWhereName;
+        private System.Windows.Forms.ColumnHeader columnDsScriptWhereType;
+        private FastColoredTextBoxNS.FastColoredTextBox txtDsScriptWhere;
     }
 }

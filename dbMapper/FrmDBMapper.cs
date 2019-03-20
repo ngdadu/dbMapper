@@ -1126,7 +1126,7 @@ where
                     var showImage = btnShowImage.Checked;
                     foreach (DataColumn column in dsResultData.Tables[0].Columns)
                     {
-                        if (!showImage && column.DataType.Name.ToLower() == "byte[]")
+                        if (!showImage && string.Equals(column.DataType.Name, "byte[]", StringComparison.OrdinalIgnoreCase))
                         {
                             dataGridViewDsResult.Columns[column.Ordinal].Visible = false;
                         }
@@ -1282,8 +1282,27 @@ insert into @parameters values
                         var delim = column.HasDelimeter ? "'" : "";
                         if (column.HasDelimeter)
                         {
-                            foreach (char c in value.ToString())
-                                if (c < 32) sb.Append("' + CHAR(").Append((int)c).Append(") + '"); else if (c == '\'') sb.Append("''"); else sb.Append(c);
+                            var chars = value.ToString().ToCharArray();
+                            for (var chi = 0; chi < chars.Length; chi++)
+                            {
+                                var c = chars[chi];
+                                if (c < 32)
+                                {
+                                    var cp = chi > 0 ? chars[chi - 1] : '0';
+                                    var cn = chi < chars.Length - 1 ? chars[chi + 1] : '0';
+                                    if (cp >= 32) sb.Append("'");
+                                    sb.Append(" + CHAR(").Append((int)c);
+                                    sb.Append(cn < 32 ? ")" : ") + '");
+                                }
+                                else if (c == '\'')
+                                {
+                                    sb.Append("''");
+                                }
+                                else
+                                {
+                                    sb.Append(c);
+                                }
+                            }
                         }
                         else
                         {
