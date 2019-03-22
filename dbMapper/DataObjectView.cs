@@ -249,6 +249,7 @@ namespace DBMapper
                                         }
                                         var columnData = new DataColumn(dcname);
                                         var sqltype = row["DataTypeName"].ToString();
+                                        var sqlbasetype = sqltype;
                                         var tname = sqltype.ToLower();
                                         string nullableSuffix = "?";
                                         switch (tname)
@@ -352,7 +353,7 @@ namespace DBMapper
                                         datitem.Tag = new DataSearchColumn
                                         {
                                             Name = cname,
-                                            TypeName = sqltype,
+                                            TypeName = sqlbasetype,
                                             MaxLength = -1,
                                             Index = datitem.Index + 1,
                                             RowsCount = -1
@@ -657,7 +658,7 @@ namespace DBMapper
      {0}
 );
 insert into @parameters values
-     {1};";
+{1};";
             var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
             if (columns.Count == 0 || sourceData.Count == 0)
             {
@@ -672,7 +673,7 @@ insert into @parameters values
             {
                 if (row > 0 && row % 1000 == 0)
                 {
-                    rowValues.Add(@"insert into @parameters values");
+                    rowValues.Add("insert into @parameters values");
                 }
                 var datarow = table.Rows[row];
                 for (var col = 0; col < columns.Count; col++)
@@ -730,7 +731,7 @@ insert into @parameters values
                         colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
                     }
                 }
-                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + ((row + 1) % 1000 == 0 ? ";" : ""));
+                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count -1 && (row + 1) % 1000 == 0 ? ";" : ""));
             }
             txtDsScriptWhere.Text = string.Format(sql, columnsheader, string.Join("\r\n", rowValues));
         }

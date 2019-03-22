@@ -1238,7 +1238,7 @@ where
      {0}
 );
 insert into @parameters values
-     {1};";
+{1};";
             var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
             if (columns.Count == 0 || bindingSourceDsResult.Count == 0)
             {
@@ -1311,7 +1311,7 @@ insert into @parameters values
                         colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
                     }
                 }
-                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + ((row + 1) % 1000 == 0 ? ";" : ""));
+                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count -1 && (row + 1) % 1000 == 0 ? ";" : ""));
             }
             txtDsScriptWhere.Text = string.Format(sql, columnsheader, string.Join("\r\n", rowValues));
         }
