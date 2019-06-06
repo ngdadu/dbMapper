@@ -546,9 +546,11 @@ namespace DBMapper
             var cell = gridData.SelectedCells.OfType<DataGridViewCell>().FirstOrDefault();
             if (cell == null)
             {
+                lblDataFieldName.Text = "";
                 txtDataField.Text = "";
                 return;
             }
+            lblDataFieldName.Text = cell.ColumnIndex < 0 || cell.ColumnIndex >= gridData.ColumnCount ? "" : gridData.Columns[cell.ColumnIndex].HeaderText;
             txtDataField.Text = txtDataField.Language == Language.XML ? FormatXml($"{cell.Value}") : btnFormattedText.Checked ? cell.FormattedValue.ToString() : $"{cell.Value}";
         }
         public static string FormatXml(string xml) {

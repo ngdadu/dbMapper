@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataObjectView));
             this.tabMain = new System.Windows.Forms.TabControl();
             this.pageScript = new System.Windows.Forms.TabPage();
@@ -72,18 +72,19 @@
             this.btnFormattedText = new System.Windows.Forms.ToolStripButton();
             this.btnSaveCell = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.txtDataField = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tabData = new System.Windows.Forms.TabControl();
             this.pageDataList = new System.Windows.Forms.TabPage();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.txtDataField = new FastColoredTextBoxNS.FastColoredTextBox();
             this.pageDataScript = new System.Windows.Forms.TabPage();
             this.containerDsScriptWhere = new System.Windows.Forms.SplitContainer();
             this.listDsScriptWhere = new System.Windows.Forms.ListView();
             this.columnDsScriptWhereName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDsScriptWhereType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.txtDsScriptWhere = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.lblDataFieldName = new System.Windows.Forms.Label();
             this.tabMain.SuspendLayout();
             this.pageScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containerScript)).BeginInit();
@@ -100,23 +101,23 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
             this.bindingNavigator1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tabData.SuspendLayout();
+            this.pageDataList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.tabData.SuspendLayout();
-            this.pageDataList.SuspendLayout();
             this.pageDataScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containerDsScriptWhere)).BeginInit();
             this.containerDsScriptWhere.Panel1.SuspendLayout();
             this.containerDsScriptWhere.Panel2.SuspendLayout();
             this.containerDsScriptWhere.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabMain
@@ -187,6 +188,7 @@
             this.txtObjScript.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript.IsReplaceMode = false;
             this.txtObjScript.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript.LeftBracket = '(';
@@ -226,6 +228,7 @@
             this.txtObjScript2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript2.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript2.IsReplaceMode = false;
             this.txtObjScript2.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript2.LeftBracket = '(';
@@ -343,8 +346,8 @@
         '\"',
         '\'',
         '\''};
-            this.txtResult.AutoIndentCharsPatterns = "\r\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\r\n^\\s*(case|default)\\s*[^:]" +
-    "*(?<range>:)\\s*(?<range>[^;]+);\r\n";
+            this.txtResult.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\n^\\s*(case|default)\\s*[^:]*(" +
+    "?<range>:)\\s*(?<range>[^;]+);\n";
             this.txtResult.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.txtResult.BackBrush = null;
             this.txtResult.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
@@ -353,7 +356,6 @@
             this.txtResult.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtResult.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtResult.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtResult.IsReplaceMode = false;
             this.txtResult.Language = FastColoredTextBoxNS.Language.CSharp;
             this.txtResult.LeftBracket = '(';
@@ -373,39 +375,39 @@
             // 
             this.gridData.AllowUserToAddRows = false;
             this.gridData.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.gridData.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.gridData.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.gridData.AutoGenerateColumns = false;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridData.DataSource = this.sourceData;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridData.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridData.DefaultCellStyle = dataGridViewCellStyle3;
             this.gridData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridData.Location = new System.Drawing.Point(0, 0);
             this.gridData.Name = "gridData";
             this.gridData.ReadOnly = true;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridData.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridData.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridData.ShowCellErrors = false;
             this.gridData.ShowRowErrors = false;
             this.gridData.Size = new System.Drawing.Size(496, 122);
@@ -616,6 +618,29 @@
             this.panel1.Size = new System.Drawing.Size(748, 179);
             this.panel1.TabIndex = 7;
             // 
+            // tabData
+            // 
+            this.tabData.Controls.Add(this.pageDataList);
+            this.tabData.Controls.Add(this.pageDataScript);
+            this.tabData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabData.Location = new System.Drawing.Point(0, 0);
+            this.tabData.Name = "tabData";
+            this.tabData.SelectedIndex = 0;
+            this.tabData.Size = new System.Drawing.Size(748, 179);
+            this.tabData.TabIndex = 2;
+            // 
+            // pageDataList
+            // 
+            this.pageDataList.Controls.Add(this.splitContainer2);
+            this.pageDataList.Controls.Add(this.bindingNavigator1);
+            this.pageDataList.Location = new System.Drawing.Point(4, 22);
+            this.pageDataList.Name = "pageDataList";
+            this.pageDataList.Padding = new System.Windows.Forms.Padding(3);
+            this.pageDataList.Size = new System.Drawing.Size(740, 153);
+            this.pageDataList.TabIndex = 0;
+            this.pageDataList.Text = "Daten";
+            this.pageDataList.UseVisualStyleBackColor = true;
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -629,6 +654,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtDataField);
+            this.splitContainer2.Panel2.Controls.Add(this.lblDataFieldName);
             this.splitContainer2.Size = new System.Drawing.Size(734, 122);
             this.splitContainer2.SplitterDistance = 496;
             this.splitContainer2.TabIndex = 2;
@@ -654,57 +680,16 @@
             this.txtDataField.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDataField.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDataField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDataField.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDataField.IsReplaceMode = false;
-            this.txtDataField.Location = new System.Drawing.Point(0, 0);
+            this.txtDataField.Location = new System.Drawing.Point(0, 17);
             this.txtDataField.Name = "txtDataField";
             this.txtDataField.Paddings = new System.Windows.Forms.Padding(0);
             this.txtDataField.ReadOnly = true;
             this.txtDataField.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDataField.Size = new System.Drawing.Size(234, 122);
+            this.txtDataField.Size = new System.Drawing.Size(234, 105);
             this.txtDataField.TabIndex = 0;
             this.txtDataField.Zoom = 100;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.tabMain);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(748, 395);
-            this.splitContainer1.SplitterDistance = 212;
-            this.splitContainer1.TabIndex = 5;
-            this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
-            // 
-            // tabData
-            // 
-            this.tabData.Controls.Add(this.pageDataList);
-            this.tabData.Controls.Add(this.pageDataScript);
-            this.tabData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabData.Location = new System.Drawing.Point(0, 0);
-            this.tabData.Name = "tabData";
-            this.tabData.SelectedIndex = 0;
-            this.tabData.Size = new System.Drawing.Size(748, 179);
-            this.tabData.TabIndex = 2;
-            // 
-            // pageDataList
-            // 
-            this.pageDataList.Controls.Add(this.splitContainer2);
-            this.pageDataList.Controls.Add(this.bindingNavigator1);
-            this.pageDataList.Location = new System.Drawing.Point(4, 22);
-            this.pageDataList.Name = "pageDataList";
-            this.pageDataList.Padding = new System.Windows.Forms.Padding(3);
-            this.pageDataList.Size = new System.Drawing.Size(740, 153);
-            this.pageDataList.TabIndex = 0;
-            this.pageDataList.Text = "Daten";
-            this.pageDataList.UseVisualStyleBackColor = true;
             // 
             // pageDataScript
             // 
@@ -775,7 +760,7 @@
         '\'',
         '\''};
             this.txtDsScriptWhere.AutoIndentCharsPatterns = "";
-            this.txtDsScriptWhere.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.txtDsScriptWhere.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.txtDsScriptWhere.BackBrush = null;
             this.txtDsScriptWhere.CharHeight = 14;
             this.txtDsScriptWhere.CharWidth = 8;
@@ -783,6 +768,7 @@
             this.txtDsScriptWhere.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDsScriptWhere.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDsScriptWhere.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDsScriptWhere.IsReplaceMode = false;
             this.txtDsScriptWhere.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtDsScriptWhere.LeftBracket = '(';
@@ -794,6 +780,37 @@
             this.txtDsScriptWhere.Size = new System.Drawing.Size(555, 147);
             this.txtDsScriptWhere.TabIndex = 0;
             this.txtDsScriptWhere.Zoom = 100;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tabMain);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Size = new System.Drawing.Size(748, 395);
+            this.splitContainer1.SplitterDistance = 212;
+            this.splitContainer1.TabIndex = 5;
+            this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
+            // 
+            // lblDataFieldName
+            // 
+            this.lblDataFieldName.AutoEllipsis = true;
+            this.lblDataFieldName.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.lblDataFieldName.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblDataFieldName.Location = new System.Drawing.Point(0, 0);
+            this.lblDataFieldName.Name = "lblDataFieldName";
+            this.lblDataFieldName.Size = new System.Drawing.Size(234, 17);
+            this.lblDataFieldName.TabIndex = 1;
+            this.lblDataFieldName.Text = "-";
+            this.lblDataFieldName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // DataObjectView
             // 
@@ -819,24 +836,24 @@
             this.bindingNavigator1.ResumeLayout(false);
             this.bindingNavigator1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.tabData.ResumeLayout(false);
+            this.pageDataList.ResumeLayout(false);
+            this.pageDataList.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.tabData.ResumeLayout(false);
-            this.pageDataList.ResumeLayout(false);
-            this.pageDataList.PerformLayout();
             this.pageDataScript.ResumeLayout(false);
             this.containerDsScriptWhere.Panel1.ResumeLayout(false);
             this.containerDsScriptWhere.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.containerDsScriptWhere)).EndInit();
             this.containerDsScriptWhere.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -893,5 +910,6 @@
         private System.Windows.Forms.ColumnHeader columnDsScriptWhereName;
         private System.Windows.Forms.ColumnHeader columnDsScriptWhereType;
         private FastColoredTextBoxNS.FastColoredTextBox txtDsScriptWhere;
+        private System.Windows.Forms.Label lblDataFieldName;
     }
 }
