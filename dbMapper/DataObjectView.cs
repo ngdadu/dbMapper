@@ -182,8 +182,10 @@ namespace DBMapper
             lvResult.Items.Clear();
             lvResult.Groups.Clear();
             txtResult.Text = "";
+            lvResult.Tag = null;
             fieldDescriptions = null;
             string resultText = "";
+            var columnNames = new List<string>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(DataObjectView.GetConnectionString(ConnectionString, dbName)))
@@ -193,6 +195,7 @@ namespace DBMapper
                         FieldDescriptions = null;
                     else
                     {
+                        lvResult.Tag = $"{schemaName}.{tableName}";
                         try
                         {
                             FieldDescriptions = new Dictionary<string, string>();
@@ -220,11 +223,7 @@ namespace DBMapper
                                 ListViewGroup group = null;
                                 if (++resultset > 0)
                                 {
-                                    if (resultset == 1)
-                                    {
-                                        resultText = String.Format("// Resultset #0\r\n\r\n{0}", resultText);
-                                    }
-                                    resultText += String.Format("\r\n// Resultset #{0}\r\n\r\n", resultset);
+                                    resultText += String.Format("\r\n//  Resultset #{0}\r\n\r\n", resultset);
                                     group = lvResult.Groups.Add(resultset.ToString(), "Resultset #" + resultset);
                                 }
                                 int columnOrder = -1;
@@ -320,6 +319,7 @@ namespace DBMapper
                                         columnData.AllowDBNull = canNull;
                                         tname += canNull ? nullableSuffix : "";
                                         var item = new ListViewItem(cname);
+                                        columnNames.Add(cname);
                                         if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
                                         {
                                             item.BackColor = SystemColors.Info;
@@ -397,7 +397,8 @@ namespace DBMapper
                 MessageBox.Show(String.Format("Error on query:\n{0}", ex.Message));
             }
             lvResult.ShowGroups = resultset > 0;
-            txtResult.Text = resultText;
+            var headerText = lvResult.Tag == null ? "": $"//  object:  {lvResult.Tag}\r\n";
+            txtResult.Text = $"{headerText}//  columns: {string.Join(", ", columnNames)}\r\n\r\n{resultText}";
             txtResult.SelectAll();
             if (dataTables.Count > 0)
             {
@@ -458,28 +459,33 @@ namespace DBMapper
             if (tabMain.SelectedTab == pageCode)
             {
                 var resultText = "";
+                var columnNames = new List<string>();
                 foreach (ListViewItem item in lvResult.Items)
                     if (item.Checked && item.Group == null)
                     {
                         resultText += item.Tag.ToString();
+                        columnNames.Add(item.Text);
                     }
                 int resultset = 0;
                 foreach (ListViewGroup group in lvResult.Groups)
                 {
                     var groupText = "";
-                    foreach (ListViewItem item in group.Items)
-                        if (item.Checked)
+                    foreach (ListViewItem groupitem in group.Items)
+                        if (groupitem.Checked)
                         {
-                            groupText += item.Tag.ToString();
+                            groupText += groupitem.Tag.ToString();
+                            columnNames.Add(groupitem.Text);
                         }
                     if (!String.IsNullOrEmpty(groupText))
                     {
-                        if (resultset == 0) resultText = String.Format("// Resultset #0\r\n\r\n{0}", resultText);
-                        groupText = String.Format("\r\n// Resultset #{0}\r\n\r\n{1}", ++resultset, groupText);
+                        if (resultset == 0) resultText = String.Format("//  Resultset #0\r\n\r\n{0}", resultText);
+                        groupText = String.Format("\r\n//  Resultset #{0}\r\n\r\n{1}", ++resultset, groupText);
                     }
                     resultText += groupText;
                 }
                 txtResult.Text = resultText;
+                var headerText = lvResult.Tag == null ? "" : $"//  object:  {lvResult.Tag}\r\n";
+                txtResult.Text = $"{headerText}//  columns: {string.Join(", ", columnNames)}\r\n\r\n{resultText}";
             }
             else if (tabMain.SelectedTab == pageScript)
             {
