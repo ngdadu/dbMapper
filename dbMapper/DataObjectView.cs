@@ -171,7 +171,7 @@ namespace DBMapper
 
         private readonly List<int> fullTextFoundColumns = new List<int>();
 
-        public void QueryData(string dbName, string queryText, int tabPageIndex, string schemaName="", string tableName="")
+        public void QueryData(string dbName, string queryText, int tabPageIndex, string tableSchemaName="", string tableName="")
         {
             tabMain.SelectedIndex = tabPageIndex;
             sourceData.DataSource = null;
@@ -182,7 +182,7 @@ namespace DBMapper
             lvResult.Items.Clear();
             lvResult.Groups.Clear();
             txtResult.Text = "";
-            lvResult.Tag = null;
+            lvResult.Tag = string.IsNullOrEmpty(tableName) ? null : string.IsNullOrEmpty(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
             fieldDescriptions = null;
             string resultText = "";
             var columnNames = new List<string>();
@@ -191,16 +191,15 @@ namespace DBMapper
                 using (SqlConnection conn = new SqlConnection(DataObjectView.GetConnectionString(ConnectionString, dbName)))
                 {
                     conn.Open();
-                    if (string.IsNullOrEmpty(schemaName))
+                    if (string.IsNullOrEmpty(tableSchemaName))
                         FieldDescriptions = null;
                     else
                     {
-                        lvResult.Tag = $"{schemaName}.{tableName}";
                         try
                         {
                             FieldDescriptions = new Dictionary<string, string>();
                             using (var cmd = new SqlCommand(
-                                String.Format("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', '{0}', 'table', '{1}', 'column', default)", schemaName, tableName)
+                                String.Format("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', '{0}', 'table', '{1}', 'column', default)", tableSchemaName, tableName)
                                 , conn))
                             {
                                 using (var reader = cmd.ExecuteReader())

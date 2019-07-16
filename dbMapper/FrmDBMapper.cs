@@ -338,7 +338,7 @@ select DBName from @tempww where LoginName = ORIGINAL_LOGIN() order by DBname;
                 dataViewCurrentObject.QueryData(objData.DbName
                     , String.Format("select TOP {2} * from [{0}].[{1}]", objData.Schema, objData.Name, DATATOPROWS)
                     , 0, objData.ObjectType == SQLObjectType.Table ? objData.Schema : ""
-                    , objData.Name);
+                    , objData.ObjectType == SQLObjectType.Table ? objData.Name : $"{objData.Schema}.{objData.Name}");
             }
         }
 
