@@ -70,6 +70,7 @@ namespace DBMapper
             gridData.DisableGridViewError();
             tableIndex = -1;
             FieldDescriptions = null;
+            FieldKeys = null;
             containerScript.SplitterDistance = containerScript.ClientSize.Height - containerScript.SplitterWidth - 1;
             cbTextType.SelectedIndex = 0;
         }
@@ -154,6 +155,19 @@ namespace DBMapper
             }
         }
 
+        private Dictionary<string, List<string>> fieldKeys;
+
+        public Dictionary<string, List<string>> FieldKeys
+        {
+            get { return fieldKeys; }
+            set
+            {
+                fieldKeys = value;
+                columnKeys.Text = value == null ? "" : "Keys";
+                columnKeys.Width = value == null ? 0 : 160;
+            }
+        }
+
         private string fulltextSearch;
 
         public string FulltextSearch
@@ -170,6 +184,7 @@ namespace DBMapper
         }
 
         private readonly List<int> fullTextFoundColumns = new List<int>();
+        private readonly string spaces = new string(' ', 80);
 
         public void QueryData(string dbName, string queryText, int tabPageIndex, string tableSchemaName="", string tableName="")
         {
@@ -184,6 +199,7 @@ namespace DBMapper
             txtResult.Text = "";
             lvResult.Tag = string.IsNullOrEmpty(tableName) ? null : string.IsNullOrEmpty(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
             fieldDescriptions = null;
+            fieldKeys = null;
             string resultText = "";
             var columnNames = new List<string>();
             try
@@ -192,16 +208,19 @@ namespace DBMapper
                 {
                     conn.Open();
                     if (string.IsNullOrEmpty(tableSchemaName))
+                    {
                         FieldDescriptions = null;
+                        FieldKeys = null;
+                    }
                     else
                     {
                         try
                         {
                             FieldDescriptions = new Dictionary<string, string>();
-                            using (var cmd = new SqlCommand(
-                                String.Format("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', '{0}', 'table', '{1}', 'column', default)", tableSchemaName, tableName)
-                                , conn))
+                            using (var cmd = new SqlCommand("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', @schema, 'table', @name, 'column', default)", conn))
                             {
+                                cmd.Parameters.AddWithValue("@schema", tableSchemaName);
+                                cmd.Parameters.AddWithValue("@name", tableName);
                                 using (var reader = cmd.ExecuteReader())
                                 {
                                     while (reader.Read()) fieldDescriptions.Add(reader[0].ToString(), reader[1].ToString());
@@ -210,6 +229,78 @@ namespace DBMapper
                         }
                         catch { }
                         //if (fieldDescriptions.Count == 0) FieldDescriptions = null;
+                        try
+                        {
+                            FieldKeys = new Dictionary<string, List<string>>();
+                            using (var cmd = new SqlCommand(@"WITH cte as (
+                                        select 
+                                            tp.name as ParentTable, 
+                                            cp.name as ParentKeyColumn, 
+                                            tf.name as ForeignTable, 
+                                            cf.name as ForeignKeyColumn 
+                                            --, fk.constraint_column_id as FK_PartNo
+                                            --, fk.*
+                                        from 
+                                            sys.foreign_key_columns as fk
+                                        inner join 
+                                            sys.tables as tp on fk.parent_object_id = tp.object_id
+                                        inner join 
+                                            sys.tables as tf on fk.referenced_object_id = tf.object_id
+                                        inner join 
+                                            sys.columns as cp on fk.parent_object_id = cp.object_id and fk.parent_column_id = cp.column_id
+                                        inner join 
+                                            sys.columns as cf on fk.referenced_object_id = cf.object_id and fk.referenced_column_id = cf.column_id
+                                    )
+                                    SELECT
+                                    -- tc.TABLE_CATALOG
+                                    -- ,tc.TABLE_SCHEMA
+                                    -- ,tc.TABLE_NAME
+                                        ccu.COLUMN_NAME
+                                        ,tc.CONSTRAINT_TYPE
+                                        ,ccu.CONSTRAINT_NAME
+                                        ,ForeignTable +'::'+ForeignKeyColumn as Reference
+                                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc
+                                        INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS ccu
+                                            ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME
+                                        LEFT JOIN cte 
+                                            ON ParentTable=tc.TABLE_NAME and ParentKeyColumn=ccu.COLUMN_NAME and tc.CONSTRAINT_TYPE like 'F%'
+                                    WHERE 
+                                        tc.TABLE_CATALOG like @dbname
+                                        AND tc.TABLE_SCHEMA like @schema
+                                        AND tc.TABLE_NAME like @name
+                                    order by 
+                                     --   tc.TABLE_CATALOG,
+                                     --   tc.TABLE_SCHEMA,
+                                     --   tc.TABLE_NAME,
+                                        ccu.COLUMN_NAME,
+                                        tc.CONSTRAINT_TYPE,
+                                        ccu.CONSTRAINT_NAME", conn))
+                            {
+                                cmd.Parameters.AddWithValue("@dbname", dbName);
+                                cmd.Parameters.AddWithValue("@schema", tableSchemaName);
+                                cmd.Parameters.AddWithValue("@name", tableName);
+                                using (var reader = cmd.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        var colname = reader[0].ToString();
+                                        var ktype = reader[1].ToString().Substring(0,1);
+                                        var kname = reader[2].ToString();
+                                        var kref = reader.IsDBNull(3) ? kname : reader[3].ToString();
+                                        if (!ktype.StartsWith("P")) ktype = $"{ktype}({kref})";
+                                        if (fieldKeys.ContainsKey(colname))
+                                        {
+                                            fieldKeys[colname].Add(ktype);
+                                        }
+                                        else
+                                        {
+                                            fieldKeys.Add(colname, new List<string> { ktype });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
                     }
                     listDsScriptWhere.Items.Clear();
                     using (var cmd = new SqlCommand(queryText, conn))
@@ -328,10 +419,18 @@ namespace DBMapper
                                         item.SubItems.Add(canNull ? "" : "x");
                                         item.SubItems.Add((++columnOrder).ToString());
                                         item.SubItems.Add(sqltype);
+                                        string keys = null;
+                                        if (fieldKeys != null && fieldKeys.ContainsKey(cname))
+                                        {
+                                            keys = string.Join(", ", fieldKeys[cname]);
+                                            item.SubItems.Add(keys);
+                                            keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
+                                        }
+                                        string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
                                         string descr = null;
-                                        string cCode = String.Format("    public {0} {1} {{ get; set; }}\r\n", tname, cname);
                                         if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
                                         {
+                                            if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
                                             descr = fieldDescriptions[cname];
                                             item.SubItems.Add(descr);
                                             cCode = String.Format(@"

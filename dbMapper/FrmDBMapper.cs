@@ -643,12 +643,13 @@ order by o.type_desc, s.name, o.name";
         private List<SPParameter> GetSPParameters(String dbname, String schemaname, String spname)
         {
             var result = new List<SPParameter>();
-            var paramQuery = String.Format(@"exec sp_procedure_params_rowset @procedure_schema='{0}', @procedure_name='{1}'", schemaname, spname);
             using (SqlConnection conn = new SqlConnection(DataObjectView.GetConnectionString(ConnectionString, dbname)))
             {
                 conn.Open();
-                using (var cmd = new SqlCommand(paramQuery, conn))
+                using (var cmd = new SqlCommand(@"exec sp_procedure_params_rowset @procedure_schema=@schema, @procedure_name=@name", conn))
                 {
+                    cmd.Parameters.AddWithValue("@schema", schemaname);
+                    cmd.Parameters.AddWithValue("@name", spname);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
