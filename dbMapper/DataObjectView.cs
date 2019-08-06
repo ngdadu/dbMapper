@@ -234,9 +234,10 @@ namespace DBMapper
                             FieldKeys = new Dictionary<string, List<string>>();
                             using (var cmd = new SqlCommand(@"WITH cte as (
                                         select 
+											sp.name as ParentSchema,
                                             tp.name as ParentTable, 
                                             cp.name as ParentKeyColumn, 
-                                            tf.name as ForeignTable, 
+                                            '[' + sf.name + '].[' + tf.name +']' as ForeignTable, 
                                             cf.name as ForeignKeyColumn 
                                             --, fk.constraint_column_id as FK_PartNo
                                             --, fk.*
@@ -250,6 +251,10 @@ namespace DBMapper
                                             sys.columns as cp on fk.parent_object_id = cp.object_id and fk.parent_column_id = cp.column_id
                                         inner join 
                                             sys.columns as cf on fk.referenced_object_id = cf.object_id and fk.referenced_column_id = cf.column_id
+										inner join
+											sys.schemas sp on sp.schema_id = tp.schema_id
+										inner join
+											sys.schemas sf on sf.schema_id = tf.schema_id
                                     )
                                     SELECT
                                     -- tc.TABLE_CATALOG
@@ -263,7 +268,7 @@ namespace DBMapper
                                         INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS ccu
                                             ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME
                                         LEFT JOIN cte 
-                                            ON ParentTable=tc.TABLE_NAME and ParentKeyColumn=ccu.COLUMN_NAME and tc.CONSTRAINT_TYPE like 'F%'
+                                            ON ParentSchema = tc.TABLE_SCHEMA and ParentTable=tc.TABLE_NAME and ParentKeyColumn=ccu.COLUMN_NAME and tc.CONSTRAINT_TYPE like 'F%'
                                     WHERE 
                                         tc.TABLE_CATALOG like @dbname
                                         AND tc.TABLE_SCHEMA like @schema
@@ -422,6 +427,7 @@ namespace DBMapper
                                         string keys = null;
                                         if (fieldKeys != null && fieldKeys.ContainsKey(cname))
                                         {
+                                            if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
                                             keys = string.Join(", ", fieldKeys[cname]);
                                             item.SubItems.Add(keys);
                                             keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
