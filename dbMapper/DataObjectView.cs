@@ -11,6 +11,7 @@ using FastColoredTextBoxNS;
 using System.Xml;
 using System.IO;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace DBMapper
 {
@@ -326,6 +327,10 @@ namespace DBMapper
                                 if (table != null)
                                 {
                                     var tableData = new DataTable();
+                                    if (resultset == 0 && !string.IsNullOrWhiteSpace(tableName))
+                                    {
+                                        tableData.TableName = string.IsNullOrWhiteSpace(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
+                                    }
                                     dataTables.Add(tableData);
                                     foreach (DataRow row in table.Rows)
                                     {
@@ -765,33 +770,33 @@ namespace DBMapper
 
         private void listDsScriptWhere_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            var sql = @"declare @parameters table
-(
-     {0}
-);
-insert into @parameters values
-{1};";
             var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
-            if (columns.Count == 0 || sourceData.Count == 0)
+            var table = sourceData.DataSource as DataTable;
+            txtDsScriptWhere.Text = GetDataScript(table, columns);
+        }
+        public static string GetDataScript(DataTable table, List<DataSearchColumn> columns)
+        {
+            if (columns.Count == 0 || table.Rows.Count == 0)
             {
-                txtDsScriptWhere.Text = "";
-                return;
+                return "";
             }
-            var columnsheader = string.Join("\r\n    ,", columns.OrderBy(c => c.Index).Select(c => c.Name + " \t" + c.FullTypeName).ToArray());
+            var columnsheader = string.Join("\r\n    ,", columns.OrderBy(c => c.Index).Select(c => c.Name + " \t" + c.FullTypeName + "\t -- #" + c.Index).ToArray());
             var colValues = new string[columns.Count];
             var rowValues = new List<string>();
-            var table = sourceData.DataSource as DataTable;
+            var tableName = (table.TableName ?? "").Trim().Replace("[", "").Replace("]", "").Replace(" ", "");
+            tableName = Regex.Replace(tableName, "\\W", "_");
+            if (string.IsNullOrEmpty(tableName)) tableName = "parameters";
             for (var row = 0; row < table.Rows.Count; row++)
             {
-                if (row > 0 && row % 1000 == 0)
+                if (row % 1000 == 0)
                 {
-                    rowValues.Add("insert into @parameters values");
+                    rowValues.Add($"insert into @{tableName} values");
                 }
                 var datarow = table.Rows[row];
                 for (var col = 0; col < columns.Count; col++)
                 {
                     var column = columns[col];
-                    var value = datarow[column.Index - 1];
+                    var value = table.Columns.Contains(column.Name) ? datarow[column.Name] : datarow[column.Index - 1];
                     if (value == null || DBNull.Value.Equals(value))
                     {
                         colValues[col] = "NULL";
@@ -822,7 +827,7 @@ insert into @parameters values
                                 {
                                     var cp = chi > 0 ? chars[chi - 1] : '0';
                                     var cn = chi < chars.Length - 1 ? chars[chi + 1] : '0';
-                                    if (cp >= 32) sb.Append("'"); 
+                                    if (cp >= 32) sb.Append("'");
                                     sb.Append(" + CHAR(").Append((int)c);
                                     sb.Append(cn < 32 ? ")" : ") + '");
                                 }
@@ -843,9 +848,13 @@ insert into @parameters values
                         colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
                     }
                 }
-                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count -1 && (row + 1) % 1000 == 0 ? ";" : ""));
+                rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count - 1 && (row + 1) % 1000 == 0 ? ";" : ""));
             }
-            txtDsScriptWhere.Text = string.Format(sql, columnsheader, string.Join("\r\n", rowValues));
+            return $@"declare @{tableName} table
+(
+     {columnsheader}
+);
+{string.Join("\r\n", rowValues)};";
         }
     }
 }
