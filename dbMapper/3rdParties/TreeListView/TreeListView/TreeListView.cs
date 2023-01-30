@@ -769,13 +769,21 @@ namespace System.Windows.Forms
 						if(colclicked == -1) colclicked = 0;
 						item = GetItemAtFullRow(PointToClient(MousePosition));
 						_lastitemclicked = new EditItemInformations(item, colclicked, "");
-						if(_selectionMark == null || !_selectionMark.Visible) _selectionMark = item;
-						if(((APIsEnums.KeyStatesMasks)(int)m.WParam & APIsEnums.KeyStatesMasks.SHIFT) != APIsEnums.KeyStatesMasks.SHIFT &&
-							!(((APIsEnums.KeyStatesMasks)(int)m.WParam & APIsEnums.KeyStatesMasks.CONTROL) == APIsEnums.KeyStatesMasks.CONTROL &&
-							item.Parent != _selectionMark.Parent))
-							_selectionMark = item;
-						// Get where the mouse has clicked
-						APIsStructs.LVHITTESTINFO lvhittest = new APIsStructs.LVHITTESTINFO();
+						try
+						{
+							if (_selectionMark == null || !_selectionMark.Visible) _selectionMark = item;
+						}
+						catch { }
+						try 
+						{ 
+							if(((APIsEnums.KeyStatesMasks)(int)m.WParam & APIsEnums.KeyStatesMasks.SHIFT) != APIsEnums.KeyStatesMasks.SHIFT &&
+								!(((APIsEnums.KeyStatesMasks)(int)m.WParam & APIsEnums.KeyStatesMasks.CONTROL) == APIsEnums.KeyStatesMasks.CONTROL &&
+								item.Parent != _selectionMark.Parent))
+								_selectionMark = item;
+						}
+						catch { }
+					// Get where the mouse has clicked
+					APIsStructs.LVHITTESTINFO lvhittest = new APIsStructs.LVHITTESTINFO();
 						lvhittest.pt = new APIsStructs.POINTAPI(PointToClient(MousePosition));
 						APIsUser32.SendMessage(Handle, (Int32) APIsEnums.ListViewMessages.HITTEST, 0, ref lvhittest);
 						if(item == null) break;

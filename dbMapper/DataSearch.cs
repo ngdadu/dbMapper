@@ -217,7 +217,7 @@ order by s.name, o.type, o.name, c.column_id";
         public const string DataTypes_String = "char, varchar, text, nchar, nvarchar, ntext, xml, uniqueidentifier";
         public const string DataTypes_Datetime = "date, datetimeoffset, datetime2, smalldatetime, datetime, time";
         public const string DataTypes_Numbers = "bigint, numeric, bit, smallint, decimal, smallmoney, int, tinyint, money, float, real";
-        public const string DataTypes_Binary = "cursor, timestamp, hierarchyid, sql_variant, table, geometry, geography";
+        public const string DataTypes_Binary = "cursor, timestamp, hierarchyid, sql_variant, table, geometry, geography, binary, varbinary, image";
         /*
          * select name, is_nullable, max_length, 
          * case when charindex('date', name)>0 then 1 when 'time' = name then 1 when precision <> 0 then 0 else 1 end as has_delimeter 

@@ -803,7 +803,13 @@ namespace DBMapper
                     }
                     else if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
                     {
-                        colValues[col] = string.Format("'{0:s}.{1:000}'", value, ((DateTime)value).Millisecond);
+                        colValues[col] = string.Format("CONVERT(DATETIME, '{0:yyy-MM-ddTHH:mm:ss.fff}', 126)", value);
+                    }
+                    else if (value.GetType() == typeof(byte[]))
+                    {
+                        var sb = new StringBuilder("0x");
+                        foreach (var b in (byte[])value) sb.Append(b.ToString("X2"));
+                        colValues[col] = sb.ToString();
                     }
                     else if (column.TypeName == "bit")
                     {
@@ -817,6 +823,7 @@ namespace DBMapper
                     {
                         var sb = new StringBuilder();
                         var delim = column.HasDelimeter ? "'" : "";
+                        var unicodePrefix = value.GetType() == typeof(string) ? "N" : "";
                         if (column.HasDelimeter)
                         {
                             var chars = value.ToString().ToCharArray();
@@ -845,7 +852,7 @@ namespace DBMapper
                         {
                             sb.Append(value.ToString().Replace("'", "''"));
                         }
-                        colValues[col] = string.Format("{0}{1}{0}", delim, sb.ToString());
+                        colValues[col] = string.Format("{2}{0}{1}{0}", delim, sb.ToString(), unicodePrefix);
                     }
                 }
                 rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count - 1 && (row + 1) % 1000 == 0 ? ";" : ""));
