@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 
@@ -82,6 +83,7 @@ namespace ExpressProfiler
             mnuQuickFilterHostCurrent.Text = Environment.MachineName;
             QuerySeparator = "";
             cbQuerySeparator.SelectedIndex = 3;
+            gridData.AutoGenerateColumns = true;
         }
 
         private string connectionString;
@@ -680,12 +682,15 @@ namespace ExpressProfiler
         {
             if (dontUpdateSource) return;
             StringBuilder sb = new StringBuilder();
+            reTextData.Tag = null;
             foreach (int i in lvEvents.SelectedIndices)
             {
                 ListViewItem lv = m_Cached[i];
+                var evt = (ProfilerEvent)lv.Tag;
                 if (lv.SubItems[1].Text != "")
                 {
                     sb.AppendFormat("{0}{1}\r\n", lv.SubItems[1].Text, QuerySeparator.Replace("\\r\\n", "\r\n").Replace("\\n", "\r\n"));
+                    if (!string.IsNullOrEmpty(evt.DatabaseName)) reTextData.Tag = evt.DatabaseName;
                 }
             }
             reTextData.Text = sb.ToString();
@@ -1320,6 +1325,43 @@ namespace ExpressProfiler
         private void cbQuerySeparator_SelectedIndexChanged(object sender, EventArgs e)
         {
             QuerySeparator = cbQuerySeparator.Text;
+        }
+
+        private void btnQuery_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(reTextData.Text) || string.IsNullOrEmpty(connectionString)) return;
+            var profilingActive = m_ProfilingState == ProfilingStateEnum.psProfiling;
+            if (profilingActive) PauseProfiling();
+            var connStr = $"{reTextData.Tag}";
+            connStr = string.IsNullOrEmpty(connStr) ? connectionString : DataObjectView.GetConnectionString(connectionString, connStr);
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+                    using (var cmd = new SqlDataAdapter(reTextData.Text, conn))
+                    {
+                        var table = new DataTable();
+                        try
+                        {
+                            cmd.Fill(table);
+                            var oldTable = sourceQuery.DataSource is DataTable ? sourceQuery.DataSource as DataTable : null;
+                            sourceQuery.DataSource = table;
+                            if (oldTable != null) oldTable.Dispose();
+                        }
+                        catch { }
+                    }
+                }
+            }
+            finally
+            {
+                if (profilingActive) ResumeProfiling();
+            }
+        }
+
+        private void splitContainer2_Paint(object sender, PaintEventArgs e)
+        {
+            ControlPaint.DrawGrabHandle(e.Graphics, splitContainer2.SplitterRectangle, true, true);
         }
 
         private void btnQuickFilter_DropDownOpening(object sender, EventArgs e)

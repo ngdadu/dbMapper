@@ -567,34 +567,34 @@ namespace DBMapper
         {
             if (tabMain.SelectedTab == pageCode)
             {
-                var resultText = "";
+                var resultText = new StringBuilder();
                 var columnNames = new List<string>();
                 foreach (ListViewItem item in lvResult.Items)
                     if (item.Checked && item.Group == null)
                     {
-                        resultText += item.Tag.ToString();
+                        resultText.Append(item.Tag.ToString());
                         columnNames.Add(item.Text);
                     }
                 int resultset = 0;
                 foreach (ListViewGroup group in lvResult.Groups)
                 {
-                    var groupText = "";
+                    var groupText = new StringBuilder();
                     foreach (ListViewItem groupitem in group.Items)
                         if (groupitem.Checked)
                         {
-                            groupText += groupitem.Tag.ToString();
+                            groupText.Append(groupitem.Tag.ToString());
                             columnNames.Add(groupitem.Text);
                         }
-                    if (!String.IsNullOrEmpty(groupText))
+                    if (groupText.Length > 0)
                     {
-                        if (resultset == 0) resultText = String.Format("//  Resultset #0\r\n\r\n{0}", resultText);
-                        groupText = String.Format("\r\n//  Resultset #{0}\r\n\r\n{1}", ++resultset, groupText);
+                        if (resultset == 0) resultText.Insert(0, "//  Resultset #0\r\n\r\n");
+                        groupText.Insert(0, String.Format("\r\n//  Resultset #{0}\r\n\r\n", ++resultset));
                     }
-                    resultText += groupText;
+                    resultText.Append(groupText);
                 }
-                txtResult.Text = resultText;
+                txtResult.Text = resultText.ToString();
                 var headerText = lvResult.Tag == null ? "" : $"//  object:  {lvResult.Tag}\r\n";
-                txtResult.Text = $"{headerText}//  columns: {string.Join(", ", columnNames)}\r\n\r\n{resultText}";
+                txtResult.Text = $"{headerText}//  columns: {string.Join(", ", columnNames)}\r\n\r\n{resultText.ToString()}";
             }
             else if (tabMain.SelectedTab == pageScript)
             {
@@ -801,11 +801,11 @@ namespace DBMapper
                     {
                         colValues[col] = "NULL";
                     }
-                    else if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
+                    else if (value is DateTime || value is DateTime?)
                     {
                         colValues[col] = string.Format("CONVERT(DATETIME, '{0:yyy-MM-ddTHH:mm:ss.fff}', 126)", value);
                     }
-                    else if (value.GetType() == typeof(byte[]))
+                    else if (value is byte[])
                     {
                         var sb = new StringBuilder("0x");
                         foreach (var b in (byte[])value) sb.Append(b.ToString("X2"));
@@ -817,13 +817,13 @@ namespace DBMapper
                     }
                     else if (DataSearchColumn.DataTypes_Numbers.IndexOf(column.TypeName) >= 0)
                     {
-                        colValues[col] = string.Format(CultureInfo.InvariantCulture.NumberFormat, "{0}", value); //.Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                        colValues[col] = string.Format(CultureInfo.InvariantCulture.NumberFormat, "{0}", value);
                     }
                     else
                     {
                         var sb = new StringBuilder();
                         var delim = column.HasDelimeter ? "'" : "";
-                        var unicodePrefix = value.GetType() == typeof(string) ? "N" : "";
+                        var unicodePrefix = value is string ? "N" : "";
                         if (column.HasDelimeter)
                         {
                             var chars = value.ToString().ToCharArray();
