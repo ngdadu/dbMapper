@@ -198,42 +198,46 @@ namespace DBMapper
             lvResult.Items.Clear();
             lvResult.Groups.Clear();
             txtResult.Text = "";
-            lvResult.Tag = string.IsNullOrEmpty(tableName) ? null : string.IsNullOrEmpty(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
+            lvResult.Tag = string.IsNullOrEmpty(tableName) 
+                ? null 
+                : string.IsNullOrEmpty(tableSchemaName) 
+                ? tableName 
+                : $"{tableSchemaName}.{tableName}";
             fieldDescriptions = null;
             fieldKeys = null;
             string resultText = "";
             var columnNames = new List<string>();
+            SqlConnection conn = null;
             try
             {
-                using (SqlConnection conn = new SqlConnection(DataObjectView.GetConnectionString(ConnectionString, dbName)))
+                conn = new SqlConnection(DataObjectView.GetConnectionString(ConnectionString, dbName));
+                conn.Open();
+                if (string.IsNullOrEmpty(tableSchemaName))
                 {
-                    conn.Open();
-                    if (string.IsNullOrEmpty(tableSchemaName))
+                    FieldDescriptions = null;
+                    FieldKeys = null;
+                }
+                else
+                {
+                    try
                     {
-                        FieldDescriptions = null;
-                        FieldKeys = null;
-                    }
-                    else
-                    {
-                        try
+                        FieldDescriptions = new Dictionary<string, string>();
+                        using (var cmd = new SqlCommand("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', @schema, 'table', @name, 'column', default)", conn))
                         {
-                            FieldDescriptions = new Dictionary<string, string>();
-                            using (var cmd = new SqlCommand("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', @schema, 'table', @name, 'column', default)", conn))
+                            cmd.Parameters.AddWithValue("@schema", tableSchemaName);
+                            cmd.Parameters.AddWithValue("@name", tableName);
+                            using (var reader = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@schema", tableSchemaName);
-                                cmd.Parameters.AddWithValue("@name", tableName);
-                                using (var reader = cmd.ExecuteReader())
-                                {
-                                    while (reader.Read()) fieldDescriptions.Add(reader[0].ToString(), reader[1].ToString());
-                                }
+                                while (reader.Read()) fieldDescriptions.Add(reader[0].ToString(), reader[1].ToString());
                             }
                         }
-                        catch { }
-                        //if (fieldDescriptions.Count == 0) FieldDescriptions = null;
-                        try
-                        {
-                            FieldKeys = new Dictionary<string, List<string>>();
-                            using (var cmd = new SqlCommand(@"WITH cte as (
+                    }
+                    catch { }
+                    //if (fieldDescriptions.Count == 0) FieldDescriptions = null;
+                    try
+                    {
+                        FieldKeys = new Dictionary<string, List<string>>();
+                        using (var cmd = new SqlCommand(@"WITH cte as (
                                         select 
 											sp.name as ParentSchema,
                                             tp.name as ParentTable, 
@@ -281,222 +285,221 @@ namespace DBMapper
                                         ccu.COLUMN_NAME,
                                         tc.CONSTRAINT_TYPE,
                                         ccu.CONSTRAINT_NAME", conn))
+                        {
+                            cmd.Parameters.AddWithValue("@dbname", dbName);
+                            cmd.Parameters.AddWithValue("@schema", tableSchemaName);
+                            cmd.Parameters.AddWithValue("@name", tableName);
+                            using (var reader = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@dbname", dbName);
-                                cmd.Parameters.AddWithValue("@schema", tableSchemaName);
-                                cmd.Parameters.AddWithValue("@name", tableName);
-                                using (var reader = cmd.ExecuteReader())
+                                while (reader.Read())
                                 {
-                                    while (reader.Read())
+                                    var colname = reader[0].ToString();
+                                    var ktype = reader[1].ToString().Substring(0, 1);
+                                    var kname = reader[2].ToString();
+                                    var kref = reader.IsDBNull(3) ? kname : reader[3].ToString();
+                                    if (!ktype.StartsWith("P")) ktype = $"{ktype}({kref})";
+                                    if (fieldKeys.ContainsKey(colname))
                                     {
-                                        var colname = reader[0].ToString();
-                                        var ktype = reader[1].ToString().Substring(0,1);
-                                        var kname = reader[2].ToString();
-                                        var kref = reader.IsDBNull(3) ? kname : reader[3].ToString();
-                                        if (!ktype.StartsWith("P")) ktype = $"{ktype}({kref})";
-                                        if (fieldKeys.ContainsKey(colname))
-                                        {
-                                            fieldKeys[colname].Add(ktype);
-                                        }
-                                        else
-                                        {
-                                            fieldKeys.Add(colname, new List<string> { ktype });
-                                        }
+                                        fieldKeys[colname].Add(ktype);
+                                    }
+                                    else
+                                    {
+                                        fieldKeys.Add(colname, new List<string> { ktype });
                                     }
                                 }
                             }
                         }
-                        catch { }
                     }
-                    listDsScriptWhere.Items.Clear();
-                    using (var cmd = new SqlCommand(queryText, conn))
+                    catch { }
+                }
+                listDsScriptWhere.Items.Clear();
+                using (var cmd = new SqlCommand(queryText, conn))
+                {
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        using (var reader = cmd.ExecuteReader())
+                        var columnErrors = new List<string>();
+                        do
                         {
-                            var columnErrors = new List<string>();
-                            do
+                            ListViewGroup group = null;
+                            if (++resultset > 0)
                             {
-                                ListViewGroup group = null;
-                                if (++resultset > 0)
+                                resultText += String.Format("\r\n//  Resultset #{0}\r\n\r\n", resultset);
+                                group = lvResult.Groups.Add(resultset.ToString(), "Resultset #" + resultset);
+                            }
+                            int columnOrder = -1;
+                            var table = reader.GetSchemaTable();
+                            if (table != null)
+                            {
+                                var tableData = new DataTable();
+                                if (resultset == 0 && !string.IsNullOrWhiteSpace(tableName))
                                 {
-                                    resultText += String.Format("\r\n//  Resultset #{0}\r\n\r\n", resultset);
-                                    group = lvResult.Groups.Add(resultset.ToString(), "Resultset #" + resultset);
+                                    tableData.TableName = string.IsNullOrWhiteSpace(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
                                 }
-                                int columnOrder = -1;
-                                var table = reader.GetSchemaTable();
-                                if (table != null)
+                                dataTables.Add(tableData);
+                                foreach (DataRow row in table.Rows)
                                 {
-                                    var tableData = new DataTable();
-                                    if (resultset == 0 && !string.IsNullOrWhiteSpace(tableName))
+                                    var cname = row["ColumnName"].ToString();
+                                    var dcname = cname;
+                                    int dccount = 0;
+                                    while (tableData.Columns.Contains(dcname))
                                     {
-                                        tableData.TableName = string.IsNullOrWhiteSpace(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
+                                        dcname = String.Format("{0}__DUP{1}", cname, ++dccount);
                                     }
-                                    dataTables.Add(tableData);
-                                    foreach (DataRow row in table.Rows)
+                                    if (dccount > 0)
                                     {
-                                        var cname = row["ColumnName"].ToString();
-                                        var dcname = cname;
-                                        int dccount=0;
-                                        while (tableData.Columns.Contains(dcname))
-                                        {
-                                            dcname=String.Format("{0}__DUP{1}", cname, ++dccount);
-                                        }
-                                        if (dccount > 0)
-                                        {
-                                            columnErrors.Add(String.Format("Column {0} exists already in dataset {1}: renamed to {2}", cname, resultset, dcname));
-                                            cname = dcname;
-                                        }
-                                        var columnData = new DataColumn(dcname);
-                                        var sqltype = row["DataTypeName"].ToString();
-                                        var sqlbasetype = sqltype;
-                                        var tname = sqltype.ToLower();
-                                        string nullableSuffix = "?";
-                                        switch (tname)
-                                        {
-                                            case "char":
-                                            case "varchar":
-                                            case "nvarchar":
-                                                int csize = (int)row["ColumnSize"];
-                                                sqltype = String.Format("{0}({1})", sqltype, csize < 0 || csize >= 0x7FFFFFFF ? "max" : csize.ToString());
-                                                goto case "text";
-                                            case "text":
-                                            case "ntext":
-                                            case "xml":
-                                                tname = "string";
-                                                columnData.DataType = typeof(string);
-                                                nullableSuffix = "";
-                                                break;
-                                            case "money":
-                                                tname = "decimal";
-                                                columnData.DataType = typeof(decimal);
-                                                break;
-                                            case "image":
-                                            case "binary":
-                                            case "varbinary":
-                                                tname = "byte[]";
-                                                columnData.DataType = typeof(byte[]);
-                                                nullableSuffix = "";
-                                                break;
-                                            case "timestamp":
-                                                tname = "byte[]";
-                                                columnData.DataType = typeof(object);
-                                                nullableSuffix = "";
-                                                break;
-                                            case "bigint":
-                                                tname = "long";
-                                                columnData.DataType = typeof(long);
-                                                break;
-                                            case "smallint":
-                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                                tname = "short";
-                                                columnData.DataType = typeof(short);
-                                                break;
-                                            case "tinyint":
-                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                                tname = "byte";
-                                                columnData.DataType = typeof(byte);
-                                                break;
-                                            case "int":
-                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                                columnData.DataType = typeof(Int32);
-                                                break;
-                                            case "bit":
-                                                tname = "bool";
-                                                columnData.DataType = typeof(bool);
-                                                break;
-                                            case "uniqueidentifier":
-                                                tname = "Guid";
-                                                columnData.DataType = typeof(Guid);
-                                                break;
-                                            case "datetime":
-                                            case "date":
-                                            case "time":
-                                                tname = "DateTime";
-                                                columnData.DataType = typeof(DateTime);
-                                                break;
-                                        }
-                                        bool canNull = (bool)row["AllowDBNull"];
-                                        columnData.AllowDBNull = canNull;
-                                        tname += canNull ? nullableSuffix : "";
-                                        var item = new ListViewItem(cname);
-                                        columnNames.Add(cname);
-                                        if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
-                                        {
-                                            item.BackColor = SystemColors.Info;
-                                            item.ForeColor = SystemColors.InfoText;
-                                        }
-                                        item.SubItems.Add(tname);
-                                        item.SubItems.Add(canNull ? "" : "x");
-                                        item.SubItems.Add((++columnOrder).ToString());
-                                        item.SubItems.Add(sqltype);
-                                        string keys = null;
-                                        if (fieldKeys != null && fieldKeys.ContainsKey(cname))
-                                        {
-                                            if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
-                                            keys = string.Join(", ", fieldKeys[cname]);
-                                            item.SubItems.Add(keys);
-                                            keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
-                                        }
-                                        string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
-                                        string descr = null;
-                                        if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
-                                        {
-                                            if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
-                                            descr = fieldDescriptions[cname];
-                                            item.SubItems.Add(descr);
-                                            cCode = String.Format(@"
+                                        columnErrors.Add(String.Format("Column {0} exists already in dataset {1}: renamed to {2}", cname, resultset, dcname));
+                                        cname = dcname;
+                                    }
+                                    var columnData = new DataColumn(dcname);
+                                    var sqltype = row["DataTypeName"].ToString();
+                                    var sqlbasetype = sqltype;
+                                    var tname = sqltype.ToLower();
+                                    string nullableSuffix = "?";
+                                    switch (tname)
+                                    {
+                                        case "char":
+                                        case "varchar":
+                                        case "nvarchar":
+                                            int csize = (int)row["ColumnSize"];
+                                            sqltype = String.Format("{0}({1})", sqltype, csize < 0 || csize >= 0x7FFFFFFF ? "max" : csize.ToString());
+                                            goto case "text";
+                                        case "text":
+                                        case "ntext":
+                                        case "xml":
+                                            tname = "string";
+                                            columnData.DataType = typeof(string);
+                                            nullableSuffix = "";
+                                            break;
+                                        case "money":
+                                            tname = "decimal";
+                                            columnData.DataType = typeof(decimal);
+                                            break;
+                                        case "image":
+                                        case "binary":
+                                        case "varbinary":
+                                            tname = "byte[]";
+                                            columnData.DataType = typeof(byte[]);
+                                            nullableSuffix = "";
+                                            break;
+                                        case "timestamp":
+                                            tname = "byte[]";
+                                            columnData.DataType = typeof(object);
+                                            nullableSuffix = "";
+                                            break;
+                                        case "bigint":
+                                            tname = "long";
+                                            columnData.DataType = typeof(long);
+                                            break;
+                                        case "smallint":
+                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                            tname = "short";
+                                            columnData.DataType = typeof(short);
+                                            break;
+                                        case "tinyint":
+                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                            tname = "byte";
+                                            columnData.DataType = typeof(byte);
+                                            break;
+                                        case "int":
+                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                            columnData.DataType = typeof(Int32);
+                                            break;
+                                        case "bit":
+                                            tname = "bool";
+                                            columnData.DataType = typeof(bool);
+                                            break;
+                                        case "uniqueidentifier":
+                                            tname = "Guid";
+                                            columnData.DataType = typeof(Guid);
+                                            break;
+                                        case "datetime":
+                                        case "date":
+                                        case "time":
+                                            tname = "DateTime";
+                                            columnData.DataType = typeof(DateTime);
+                                            break;
+                                    }
+                                    bool canNull = (bool)row["AllowDBNull"];
+                                    columnData.AllowDBNull = canNull;
+                                    tname += canNull ? nullableSuffix : "";
+                                    var item = new ListViewItem(cname);
+                                    columnNames.Add(cname);
+                                    if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
+                                    {
+                                        item.BackColor = SystemColors.Info;
+                                        item.ForeColor = SystemColors.InfoText;
+                                    }
+                                    item.SubItems.Add(tname);
+                                    item.SubItems.Add(canNull ? "" : "x");
+                                    item.SubItems.Add((++columnOrder).ToString());
+                                    item.SubItems.Add(sqltype);
+                                    string keys = null;
+                                    if (fieldKeys != null && fieldKeys.ContainsKey(cname))
+                                    {
+                                        if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
+                                        keys = string.Join(", ", fieldKeys[cname]);
+                                        item.SubItems.Add(keys);
+                                        keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
+                                    }
+                                    string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
+                                    string descr = null;
+                                    if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
+                                    {
+                                        if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
+                                        descr = fieldDescriptions[cname];
+                                        item.SubItems.Add(descr);
+                                        cCode = String.Format(@"
 
 /// <summary>
 /// {0}
 /// </summary>
 {1}", descr, cCode);
-                                        }
-                                        if (group != null) item.Group = group;
-                                        lvResult.Items.Add(item);
-                                        resultText += cCode;
-                                        item.Tag = cCode;
-                                        item.Checked = true;
-
-                                        var datitem = listDsScriptWhere.Items.Add(cname);
-                                        datitem.SubItems.Add(tname);
-                                        datitem.Tag = new DataSearchColumn
-                                        {
-                                            Name = cname,
-                                            TypeName = sqlbasetype,
-                                            MaxLength = -1,
-                                            Index = datitem.Index + 1,
-                                            RowsCount = -1
-                                        };
-                                        try
-                                        {
-                                            tableData.Columns.Add(columnData);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            if (dccount > 0) columnErrors.Add(String.Format("Column-Error {0} in dataset {1}: {2}", columnData.ColumnName, resultset, ex.Message));
-                                        }
                                     }
-                                    while (reader.Read())
+                                    if (group != null) item.Group = group;
+                                    lvResult.Items.Add(item);
+                                    resultText += cCode;
+                                    item.Tag = cCode;
+                                    item.Checked = true;
+
+                                    var datitem = listDsScriptWhere.Items.Add(cname);
+                                    datitem.SubItems.Add(tname);
+                                    datitem.Tag = new DataSearchColumn
                                     {
-                                        var row = tableData.NewRow();
-                                        var items = new object[columnOrder + 1];
-                                        for (int i = 0; i <= columnOrder; i++) if (!reader.IsDBNull(i))
-                                                try
-                                                {
-                                                    object v = reader[i];
-                                                    if (tableData.Columns[i].DataType == typeof(bool) && v.GetType() == typeof(int)) v = (int)v != 0;
-                                                    items[i] = v;
-                                                }
-                                                catch { }
-                                        row.ItemArray = items;
-                                        tableData.Rows.Add(row);
+                                        Name = cname,
+                                        TypeName = sqlbasetype,
+                                        MaxLength = -1,
+                                        Index = datitem.Index + 1,
+                                        RowsCount = -1
+                                    };
+                                    try
+                                    {
+                                        tableData.Columns.Add(columnData);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (dccount > 0) columnErrors.Add(String.Format("Column-Error {0} in dataset {1}: {2}", columnData.ColumnName, resultset, ex.Message));
                                     }
                                 }
-                            } while (reader.NextResult());
-                            if (columnErrors.Count > 0)
-                            {
-                                MessageBox.Show(String.Format("{0} column errors:\r\n* {1}", columnErrors.Count, String.Join("\r\n* ", columnErrors.ToArray())));
+                                while (reader.Read())
+                                {
+                                    var row = tableData.NewRow();
+                                    var items = new object[columnOrder + 1];
+                                    for (int i = 0; i <= columnOrder; i++) if (!reader.IsDBNull(i))
+                                            try
+                                            {
+                                                object v = reader[i];
+                                                if (tableData.Columns[i].DataType == typeof(bool) && v.GetType() == typeof(int)) v = (int)v != 0;
+                                                items[i] = v;
+                                            }
+                                            catch { }
+                                    row.ItemArray = items;
+                                    tableData.Rows.Add(row);
+                                }
                             }
+                        } while (reader.NextResult());
+                        if (columnErrors.Count > 0)
+                        {
+                            MessageBox.Show(String.Format("{0} column errors:\r\n* {1}", columnErrors.Count, String.Join("\r\n* ", columnErrors.ToArray())));
                         }
                     }
                 }
@@ -504,6 +507,195 @@ namespace DBMapper
             catch (Exception ex)
             {
                 MessageBox.Show(String.Format("Error on query:\n{0}", ex.Message));
+                if (columnNames.Count == 0 && conn != null) try
+                    {
+                        if (!string.IsNullOrEmpty(tableName))
+                        {
+                            using (var cmd = new SqlCommand($"SELECT TOP 1 * FROM {tableName} WHERE 1=0", conn))
+                            {
+                                using (var reader = cmd.ExecuteReader())
+                                {
+                                    var columnErrors = new List<string>();
+                                    do
+                                    {
+                                        ListViewGroup group = null;
+                                        if (++resultset > 0)
+                                        {
+                                            resultText += String.Format("\r\n//  Resultset #{0}\r\n\r\n", resultset);
+                                            group = lvResult.Groups.Add(resultset.ToString(), "Resultset #" + resultset);
+                                        }
+                                        int columnOrder = -1;
+                                        var table = reader.GetSchemaTable();
+                                        if (table != null)
+                                        {
+                                            var tableData = new DataTable();
+                                            if (resultset == 0 && !string.IsNullOrWhiteSpace(tableName))
+                                            {
+                                                tableData.TableName = string.IsNullOrWhiteSpace(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
+                                            }
+                                            foreach (DataRow row in table.Rows)
+                                            {
+                                                var cname = row["ColumnName"].ToString();
+                                                var dcname = cname;
+                                                int dccount = 0;
+                                                while (tableData.Columns.Contains(dcname))
+                                                {
+                                                    dcname = String.Format("{0}__DUP{1}", cname, ++dccount);
+                                                }
+                                                if (dccount > 0)
+                                                {
+                                                    columnErrors.Add(String.Format("Column {0} exists already in dataset {1}: renamed to {2}", cname, resultset, dcname));
+                                                    cname = dcname;
+                                                }
+                                                var columnData = new DataColumn(dcname);
+                                                var sqltype = row["DataTypeName"].ToString();
+                                                var sqlbasetype = sqltype;
+                                                var tname = sqltype.ToLower();
+                                                string nullableSuffix = "?";
+                                                switch (tname)
+                                                {
+                                                    case "char":
+                                                    case "varchar":
+                                                    case "nvarchar":
+                                                        int csize = (int)row["ColumnSize"];
+                                                        sqltype = String.Format("{0}({1})", sqltype, csize < 0 || csize >= 0x7FFFFFFF ? "max" : csize.ToString());
+                                                        goto case "text";
+                                                    case "text":
+                                                    case "ntext":
+                                                    case "xml":
+                                                        tname = "string";
+                                                        columnData.DataType = typeof(string);
+                                                        nullableSuffix = "";
+                                                        break;
+                                                    case "money":
+                                                        tname = "decimal";
+                                                        columnData.DataType = typeof(decimal);
+                                                        break;
+                                                    case "image":
+                                                    case "binary":
+                                                    case "varbinary":
+                                                        tname = "byte[]";
+                                                        columnData.DataType = typeof(byte[]);
+                                                        nullableSuffix = "";
+                                                        break;
+                                                    case "timestamp":
+                                                        tname = "byte[]";
+                                                        columnData.DataType = typeof(object);
+                                                        nullableSuffix = "";
+                                                        break;
+                                                    case "bigint":
+                                                        tname = "long";
+                                                        columnData.DataType = typeof(long);
+                                                        break;
+                                                    case "smallint":
+                                                        if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                        tname = "short";
+                                                        columnData.DataType = typeof(short);
+                                                        break;
+                                                    case "tinyint":
+                                                        if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                        tname = "byte";
+                                                        columnData.DataType = typeof(byte);
+                                                        break;
+                                                    case "int":
+                                                        if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                        columnData.DataType = typeof(Int32);
+                                                        break;
+                                                    case "bit":
+                                                        tname = "bool";
+                                                        columnData.DataType = typeof(bool);
+                                                        break;
+                                                    case "uniqueidentifier":
+                                                        tname = "Guid";
+                                                        columnData.DataType = typeof(Guid);
+                                                        break;
+                                                    case "datetime":
+                                                    case "date":
+                                                    case "time":
+                                                        tname = "DateTime";
+                                                        columnData.DataType = typeof(DateTime);
+                                                        break;
+                                                }
+                                                bool canNull = (bool)row["AllowDBNull"];
+                                                columnData.AllowDBNull = canNull;
+                                                tname += canNull ? nullableSuffix : "";
+                                                var item = new ListViewItem(cname);
+                                                columnNames.Add(cname);
+                                                if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
+                                                {
+                                                    item.BackColor = SystemColors.Info;
+                                                    item.ForeColor = SystemColors.InfoText;
+                                                }
+                                                item.SubItems.Add(tname);
+                                                item.SubItems.Add(canNull ? "" : "x");
+                                                item.SubItems.Add((++columnOrder).ToString());
+                                                item.SubItems.Add(sqltype);
+                                                string keys = null;
+                                                if (fieldKeys != null && fieldKeys.ContainsKey(cname))
+                                                {
+                                                    if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
+                                                    keys = string.Join(", ", fieldKeys[cname]);
+                                                    item.SubItems.Add(keys);
+                                                    keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
+                                                }
+                                                string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
+                                                string descr = null;
+                                                if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
+                                                {
+                                                    if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
+                                                    descr = fieldDescriptions[cname];
+                                                    item.SubItems.Add(descr);
+                                                    cCode = String.Format(@"
+
+/// <summary>
+/// {0}
+/// </summary>
+{1}", descr, cCode);
+                                                }
+                                                if (group != null) item.Group = group;
+                                                lvResult.Items.Add(item);
+                                                resultText += cCode;
+                                                item.Tag = cCode;
+                                                item.Checked = true;
+
+                                                var datitem = listDsScriptWhere.Items.Add(cname);
+                                                datitem.SubItems.Add(tname);
+                                                datitem.Tag = new DataSearchColumn
+                                                {
+                                                    Name = cname,
+                                                    TypeName = sqlbasetype,
+                                                    MaxLength = -1,
+                                                    Index = datitem.Index + 1,
+                                                    RowsCount = -1
+                                                };
+                                                try
+                                                {
+                                                    tableData.Columns.Add(columnData);
+                                                }
+                                                catch (Exception ex2)
+                                                {
+                                                    if (dccount > 0) columnErrors.Add(String.Format("Column-Error {0} in dataset {1}: {2}", columnData.ColumnName, resultset, ex2.Message));
+                                                }
+                                            }
+                                            tableData.Dispose();
+                                        }
+                                    } while (reader.NextResult());
+                                    if (columnErrors.Count > 0)
+                                    {
+                                        MessageBox.Show(String.Format("{0} column errors:\r\n* {1}", columnErrors.Count, String.Join("\r\n* ", columnErrors.ToArray())));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+            }
+            finally
+            {
+                conn.Dispose();
             }
             lvResult.ShowGroups = resultset > 0;
             var headerText = lvResult.Tag == null ? "": $"//  object:  {lvResult.Tag}\r\n";
@@ -603,6 +795,40 @@ namespace DBMapper
                     var column = gridData.Columns[item.Text];
                     if (column != null) column.Visible = item.Checked && (btnShowImage.Checked || item.SubItems[1].Text != "byte[]");
                 }
+            }
+            else if (tabMain.SelectedTab == pageTable)
+            {
+                var columnDefs = new List<string>();
+                var columnNames = new List<string>();
+                var maxNameLength = lvResult.Items.OfType<ListViewItem>().Max(v => (v.Text ?? "").Length);
+                string GetColDef(ListViewItem item)
+                    => $"{item.Text.PadRight(maxNameLength)} {item.SubItems[4].Text}{(item.SubItems[2].Text == "x" ? " NOT NULL" : "")}";
+                foreach (ListViewItem item in lvResult.Items)
+                    if (item.Checked && item.Group == null)
+                    {
+                        columnDefs.Add(GetColDef(item));
+                        columnNames.Add(item.Text);
+                    }
+                int resultset = 0;
+                foreach (ListViewGroup group in lvResult.Groups)
+                {
+                    var groupText = new List<string>();
+                    foreach (ListViewItem groupitem in group.Items)
+                        if (groupitem.Checked)
+                        {
+                            groupText.Add(GetColDef(groupitem));
+                            columnNames.Add(groupitem.Text);
+                        }
+                    if (groupText.Count > 0)
+                    {
+                        if (resultset == 0) columnDefs.Insert(0, "--  Resultset #0\r\n");
+                        groupText.Insert(0, String.Format("--  Resultset #{0}\r\n", ++resultset));
+                    }
+                    columnDefs.AddRange(groupText);
+                }
+                txtSQLTable.Text = columnDefs.ToString();
+                var headerText = $"\r\nCREATE TABLE {lvResult.Tag} (\r\n";
+                txtSQLTable.Text = $"--  columns: {string.Join(", ", columnNames)}\r\n{headerText}\r\n\t  {string.Join("\r\n\t, ", columnDefs)}\r\n)";
             }
         }
 
