@@ -33,7 +33,10 @@ namespace DBMapper
         {
             InitializeComponent();
             contextMenuQueryEditor_Opening(null, null); //dummy to initialize
-            dataViewCurrentObject.DataCaption = String.Format("Top {0}", DATATOPROWS);
+            dataViewCurrentObject.DataLimit = -DATATOPROWS;
+            dataViewCurrentObject.DataLimitChanged += DataViewCurrentObject_DataLimitChanged;
+            dataViewQuery.DataLimit = 0;
+            dataViewQuery.DataLimitEnabled = false;
             txtDsResultSQL.Dock = DockStyle.Fill;
             txtDsResultSQL.Visible = false;
             objectsTree = new TreeListView();
@@ -130,6 +133,16 @@ namespace DBMapper
                 DataSearchColumn.DataTypes_String, DataSearchColumn.DataTypes_Datetime, DataSearchColumn.DataTypes_Numbers, DataSearchColumn.DataTypes_Binary)
                 .Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries).OrderBy(s => s))
                 cbDsValueColType.Items.Add(item);
+        }
+
+        private void DataViewQuery_DataLimitChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DataViewCurrentObject_DataLimitChanged(object sender, EventArgs e)
+        {
+            ShowDataView(objectsTree.FocusedItem?.Tag as SQLObjectData);
         }
 
         private void registerHotkey()
@@ -301,7 +314,6 @@ select DBName from @tempww where LoginName = ORIGINAL_LOGIN() order by DBname;
         void objectsTree_ItemActivate(object sender, EventArgs e)
         {
             if (objectsTree.FocusedItem == null) return;
-            var objData = objectsTree.FocusedItem.Tag as SQLObjectData;
             var currentItem = objectsTree.FocusedItem;
             if (currentItem.IsExpanded)
                 currentItem.Collapse();
@@ -328,6 +340,11 @@ select DBName from @tempww where LoginName = ORIGINAL_LOGIN() order by DBname;
                 }
                 currentItem = currentItem.Parent;
             }
+            ShowDataView(objectsTree.FocusedItem.Tag as SQLObjectData);
+        }
+
+        private void ShowDataView(SQLObjectData objData)
+        {
             if (objData == null) return;
             dataViewCurrentObject.ScriptAvailable = !String.IsNullOrEmpty(objData.Script);
             dataViewCurrentObject.ScriptSource = objData.Script;
@@ -336,7 +353,7 @@ select DBName from @tempww where LoginName = ORIGINAL_LOGIN() order by DBname;
             if (objData.ObjectType == SQLObjectType.Table || objData.ObjectType == SQLObjectType.View)
             {
                 dataViewCurrentObject.QueryData(objData.DbName
-                    , String.Format("select TOP {2} * from [{0}].[{1}]", objData.Schema, objData.Name, DATATOPROWS)
+                    , String.Format("select {2} * from [{0}].[{1}]", objData.Schema, objData.Name, dataViewCurrentObject.DataLimit > 0 ? $"TOP {dataViewCurrentObject.DataLimit}" : "")
                     , 0, objData.ObjectType == SQLObjectType.Table ? objData.Schema : ""
                     , objData.ObjectType == SQLObjectType.Table ? objData.Name : $"{objData.Schema}.{objData.Name}");
             }
@@ -1238,6 +1255,7 @@ where
             var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
             var table = bindingSourceDsResult.DataSource as DataTable;
             txtDsScriptWhere.Text = DataObjectView.GetDataScript(table, columns);
+            txtDsScriptWhere.Tag = $"{DataObjectView.GetTableName(table)}.sql";
         }
 
         private void cbDsValueContent_KeyPress(object sender, KeyPressEventArgs e)

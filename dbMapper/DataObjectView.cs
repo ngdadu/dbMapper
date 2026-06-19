@@ -49,23 +49,33 @@ namespace DBMapper
             sourceData.ResetBindings(true);
         }
 
+        private int _DataLimit = 100;
         [Browsable(false)]
-        [DefaultValue("Data")]
-        public string DataCaption
-        {
-            get
+        [DefaultValue(100)]
+        public int DataLimit {
+            get => _DataLimit;
+            set 
             {
-                return lblDataCaption.Text;
-            }
-            set
-            {
-                lblDataCaption.Text = value;
+                _DataLimit = Math.Abs(value);
+                lblDataCaption.Text = String.Format("Top {0}", _DataLimit);
+                if (value >= 0) DataLimitChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
+        [Browsable(false)]
+        [DefaultValue(true)]
+        public bool DataLimitEnabled
+        {
+            get { return lblDataCaption.Visible; }
+            set { lblDataCaption.Visible = value; }
+        }
         public DataObjectView()
         {
             InitializeComponent();
+            this.btnDsScriptFieldsSelectAll.Image = global::DBMapper.Properties.Resources.media_step_forward;
+            this.btnDsScriptFieldsSelectReverse.Image = global::DBMapper.Properties.Resources.media_step_back;
+            this.btnDsScriptSave.Image = global::DBMapper.Properties.Resources.disk_blue;
+            this.btnSaveCell.Image = global::DBMapper.Properties.Resources.disk_blue;
             bindingNavigator1.Visible = true;
             gridData.AutoGenerateColumns = true;
             gridData.DisableGridViewError();
@@ -355,13 +365,15 @@ namespace DBMapper
                                     var sqlbasetype = sqltype;
                                     var tname = sqltype.ToLower();
                                     string nullableSuffix = "?";
+                                    int csize = -1;
                                     switch (tname)
                                     {
                                         case "char":
                                         case "varchar":
                                         case "nvarchar":
-                                            int csize = (int)row["ColumnSize"];
-                                            sqltype = String.Format("{0}({1})", sqltype, csize < 0 || csize >= 0x7FFFFFFF ? "max" : csize.ToString());
+                                            csize = (int)row["ColumnSize"];
+                                            if (csize >= 0x7FFFFFFF) csize = -1;
+                                            sqltype = String.Format("{0}({1})", sqltype, csize < 0 ? "max" : csize.ToString());
                                             goto case "text";
                                         case "text":
                                         case "ntext":
@@ -467,7 +479,7 @@ namespace DBMapper
                                     {
                                         Name = cname,
                                         TypeName = sqlbasetype,
-                                        MaxLength = -1,
+                                        MaxLength = csize,
                                         Index = datitem.Index + 1,
                                         RowsCount = -1
                                     };
@@ -800,7 +812,9 @@ namespace DBMapper
             {
                 var columnDefs = new List<string>();
                 var columnNames = new List<string>();
-                var maxNameLength = lvResult.Items.OfType<ListViewItem>().Max(v => (v.Text ?? "").Length);
+                var maxNameLength = lvResult.Items.Count > 0
+                    ? lvResult.Items.OfType<ListViewItem>().Max(v => (v.Text ?? "").Length)
+                    : 0;
                 string GetColDef(ListViewItem item)
                     => $"{item.Text.PadRight(maxNameLength)} {item.SubItems[4].Text}{(item.SubItems[2].Text == "x" ? " NOT NULL" : "")}";
                 foreach (ListViewItem item in lvResult.Items)
@@ -986,6 +1000,8 @@ namespace DBMapper
         private void btnSaveCell_Click(object sender, EventArgs e)
         {
             if (gridData.CurrentCell == null) return;
+            saveFileDialog1.Filter = "All files (*.*)|*.*";
+            saveFileDialog1.FileName = gridData.CurrentCell.OwningColumn.HeaderText;
             if (saveFileDialog1.ShowDialog(ParentForm) != DialogResult.OK) return;
             using (var file = new StreamWriter(saveFileDialog1.FileName, false))
             {
@@ -996,9 +1012,11 @@ namespace DBMapper
 
         private void listDsScriptWhere_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
+            if (listDsScriptWhere_Suspended) return;
             var columns = listDsScriptWhere.CheckedItems.OfType<ListViewItem>().Select(i => i.Tag as DataSearchColumn).ToList();
             var table = sourceData.DataSource as DataTable;
             txtDsScriptWhere.Text = GetDataScript(table, columns);
+            txtDsScriptWhere.Tag = $"{GetTableName(table)}.sql";
         }
         public static string GetDataScript(DataTable table, List<DataSearchColumn> columns)
         {
@@ -1006,12 +1024,13 @@ namespace DBMapper
             {
                 return "";
             }
-            var columnsheader = string.Join("\r\n    ,", columns.OrderBy(c => c.Index).Select(c => c.Name + " \t" + c.FullTypeName + "\t -- #" + c.Index).ToArray());
+            var columnsheader = string.Join("\r\n    ,", columns
+                .OrderBy(c => c.Index)
+                .Select(c => c.Name + " \t" + c.FullTypeName + "\t -- #" + c.Index)
+                .ToArray());
             var colValues = new string[columns.Count];
             var rowValues = new List<string>();
-            var tableName = (table.TableName ?? "").Trim().Replace("[", "").Replace("]", "").Replace(" ", "");
-            tableName = Regex.Replace(tableName, "\\W", "_");
-            if (string.IsNullOrEmpty(tableName)) tableName = "parameters";
+            string tableName = GetTableName(table);
             for (var row = 0; row < table.Rows.Count; row++)
             {
                 if (row % 1000 == 0)
@@ -1043,7 +1062,8 @@ namespace DBMapper
                     }
                     else if (DataSearchColumn.DataTypes_Numbers.IndexOf(column.TypeName) >= 0)
                     {
-                        colValues[col] = string.Format(CultureInfo.InvariantCulture.NumberFormat, "{0}", value);
+                        var deci = Convert.ToDouble(value);
+                        colValues[col] = deci.ToString(CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -1088,6 +1108,102 @@ namespace DBMapper
      {columnsheader}
 );
 {string.Join("\r\n", rowValues)};";
+        }
+
+        public static string GetTableName(DataTable table)
+        {
+            var tableName = (table.TableName ?? "").Trim().Replace("[", "").Replace("]", "").Replace(" ", "");
+            tableName = Regex.Replace(tableName, "\\W", "_");
+            if (string.IsNullOrEmpty(tableName)) tableName = "parameters";
+            return tableName;
+        }
+
+        bool listDsScriptWhere_Suspended = false;
+        private void btnDsScriptFieldsSelectAll_Click(object sender, EventArgs e)
+        {
+            listDsScriptWhere_Suspended = true;
+            try
+            {
+                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = true;
+            }
+            finally
+            {
+                listDsScriptWhere_Suspended = false;
+                listDsScriptWhere_ItemChecked(null, null);
+            }
+        }
+
+        private void btnDsScriptFieldsSelectReverse_Click(object sender, EventArgs e)
+        {
+            listDsScriptWhere_Suspended = true;
+            try
+            {
+                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = !item.Checked;
+            }
+            finally
+            {
+                listDsScriptWhere_Suspended = false;
+                listDsScriptWhere_ItemChecked(null, null);
+            }
+        }
+
+        private void btnDsScriptSave_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "SQL files (*.sql)|*.sql|All files (*.*)|*.*";
+            saveFileDialog1.FileName = $"{txtDsScriptWhere.Tag}";
+            if (saveFileDialog1.ShowDialog(ParentForm) != DialogResult.OK) return;
+            try
+            {
+                txtDsScriptWhere.SaveToFile(saveFileDialog1.FileName, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving file {saveFileDialog1.FileName}: " + ex.Message);
+            }
+        }
+
+        public event EventHandler DataLimitChanged;
+
+        private void lblDataCaption_Click(object sender, EventArgs e)
+        {
+            lblDataCaption.ShowDropDown();
+        }
+
+        private void btnDataTop0_Click(object sender, EventArgs e)
+        {
+            DataLimit = 0;
+        }
+
+        private void lblDataCaption_DropDownOpening(object sender, EventArgs e)
+        {
+            btnDataTopDouble.Text = $"TOP {DataLimit * 2}";
+            btnDataTopTriple.Text = $"TOP {DataLimit * 3}";
+            btnDataTopHalf.Text = $"TOP {DataLimit / 2}";
+        }
+
+        private void btnDataTop10_Click(object sender, EventArgs e)
+        {
+            DataLimit = 10;
+        }
+
+        private void btnDataTop100_Click(object sender, EventArgs e)
+        {
+            DataLimit = 100;
+        }
+
+        private void btnDataTopDouble_Click(object sender, EventArgs e)
+        {
+            DataLimit *= 2;
+        }
+
+        private void btnDataTopTriple_Click(object sender, EventArgs e)
+        {
+            DataLimit *= 3;
+        }
+
+        private void btnDataTopHalf_Click(object sender, EventArgs e)
+        {
+            DataLimit /= 2;
         }
     }
 }

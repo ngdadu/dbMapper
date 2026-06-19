@@ -209,7 +209,9 @@ order by s.name, o.type, o.name, c.column_id";
         {
             get
             {
-                return "char, varchar, nchar, nvarchar".IndexOf(TypeName) >= 0 && MaxLength > 0 && MaxLength <= 0x7fff ? string.Format("{0}({1})", TypeName, MaxLength) : TypeName;
+                return "char, varchar, nchar, nvarchar".IndexOf(TypeName, StringComparison.OrdinalIgnoreCase) >= 0 && MaxLength > 0 && MaxLength <= 0x7fff 
+                    ? string.Format("{0}({1})", TypeName, MaxLength) 
+                    : TypeName;
             }
         }
         public static readonly List<string> NotLikeableTypes = new List<string> { "geography", "geometry", "xml" };

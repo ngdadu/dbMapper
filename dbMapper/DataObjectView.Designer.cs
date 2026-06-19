@@ -51,11 +51,20 @@
             this.columnDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pageCode = new System.Windows.Forms.TabPage();
             this.txtResult = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.pageTable = new System.Windows.Forms.TabPage();
+            this.txtSQLTable = new FastColoredTextBoxNS.FastColoredTextBox();
             this.gridData = new System.Windows.Forms.DataGridView();
             this.sourceData = new System.Windows.Forms.BindingSource(this.components);
             this.bindingNavigator1 = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
-            this.lblDataCaption = new System.Windows.Forms.ToolStripLabel();
+            this.lblDataCaption = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnDataTop0 = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDataTop10 = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDataTop100 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDataTopDouble = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDataTopTriple = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDataTopHalf = new System.Windows.Forms.ToolStripMenuItem();
             this.cbDataSet = new System.Windows.Forms.ToolStripComboBox();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
@@ -84,10 +93,12 @@
             this.columnDsScriptWhereName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDsScriptWhereType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.txtDsScriptWhere = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.toolStripDsScript = new System.Windows.Forms.ToolStrip();
+            this.btnDsScriptFieldsSelectAll = new System.Windows.Forms.ToolStripButton();
+            this.btnDsScriptFieldsSelectReverse = new System.Windows.Forms.ToolStripButton();
+            this.btnDsScriptSave = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.pageTable = new System.Windows.Forms.TabPage();
-            this.txtSQLTable = new FastColoredTextBoxNS.FastColoredTextBox();
             this.tabMain.SuspendLayout();
             this.pageScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containerScript)).BeginInit();
@@ -99,6 +110,8 @@
             this.pageFields.SuspendLayout();
             this.pageCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtResult)).BeginInit();
+            this.pageTable.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSQLTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourceData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
@@ -117,12 +130,11 @@
             this.containerDsScriptWhere.Panel2.SuspendLayout();
             this.containerDsScriptWhere.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).BeginInit();
+            this.toolStripDsScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.pageTable.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSQLTable)).BeginInit();
             this.SuspendLayout();
             // 
             // tabMain
@@ -171,7 +183,7 @@
             this.containerScript.Panel2.Controls.Add(this.txtObjScript2);
             this.containerScript.Panel2MinSize = 0;
             this.containerScript.Size = new System.Drawing.Size(988, 283);
-            this.containerScript.SplitterDistance = 92;
+            this.containerScript.SplitterDistance = 25;
             this.containerScript.SplitterWidth = 22;
             this.containerScript.TabIndex = 3;
             // 
@@ -197,7 +209,6 @@
             this.txtObjScript.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtObjScript.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript.IsReplaceMode = false;
             this.txtObjScript.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript.LeftBracket = '(';
@@ -209,7 +220,7 @@
             this.txtObjScript.RightBracket = ')';
             this.txtObjScript.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtObjScript.ShowScrollBars = false;
-            this.txtObjScript.Size = new System.Drawing.Size(988, 92);
+            this.txtObjScript.Size = new System.Drawing.Size(988, 25);
             this.txtObjScript.TabIndex = 0;
             this.txtObjScript.WordWrap = true;
             this.txtObjScript.Zoom = 100;
@@ -238,7 +249,6 @@
             this.txtObjScript2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtObjScript2.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript2.IsReplaceMode = false;
             this.txtObjScript2.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript2.LeftBracket = '(';
@@ -250,7 +260,7 @@
             this.txtObjScript2.RightBracket = ')';
             this.txtObjScript2.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtObjScript2.ShowScrollBars = false;
-            this.txtObjScript2.Size = new System.Drawing.Size(988, 169);
+            this.txtObjScript2.Size = new System.Drawing.Size(988, 254);
             this.txtObjScript2.SourceTextBox = this.txtObjScript;
             this.txtObjScript2.TabIndex = 0;
             this.txtObjScript2.WordWrap = true;
@@ -369,7 +379,7 @@
         '\''};
             this.txtResult.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\n^\\s*(case|default)\\s*[^:]*(" +
     "?<range>:)\\s*(?<range>[^;]+);\n";
-            this.txtResult.AutoScrollMinSize = new System.Drawing.Size(35, 22);
+            this.txtResult.AutoScrollMinSize = new System.Drawing.Size(2, 22);
             this.txtResult.BackBrush = null;
             this.txtResult.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
             this.txtResult.CharHeight = 22;
@@ -392,6 +402,55 @@
             this.txtResult.TabIndex = 0;
             this.txtResult.Zoom = 100;
             this.txtResult.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.txtResult_TextChanged);
+            // 
+            // pageTable
+            // 
+            this.pageTable.Controls.Add(this.txtSQLTable);
+            this.pageTable.Location = new System.Drawing.Point(4, 29);
+            this.pageTable.Name = "pageTable";
+            this.pageTable.Padding = new System.Windows.Forms.Padding(3);
+            this.pageTable.Size = new System.Drawing.Size(1114, 293);
+            this.pageTable.TabIndex = 3;
+            this.pageTable.Text = "SQLTable";
+            this.pageTable.UseVisualStyleBackColor = true;
+            // 
+            // txtSQLTable
+            // 
+            this.txtSQLTable.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtSQLTable.AutoIndentCharsPatterns = "";
+            this.txtSQLTable.AutoScrollMinSize = new System.Drawing.Size(0, 22);
+            this.txtSQLTable.BackBrush = null;
+            this.txtSQLTable.CharHeight = 22;
+            this.txtSQLTable.CharWidth = 12;
+            this.txtSQLTable.CommentPrefix = "--";
+            this.txtSQLTable.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtSQLTable.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtSQLTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSQLTable.IsReplaceMode = false;
+            this.txtSQLTable.Language = FastColoredTextBoxNS.Language.SQL;
+            this.txtSQLTable.LeftBracket = '(';
+            this.txtSQLTable.Location = new System.Drawing.Point(3, 3);
+            this.txtSQLTable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtSQLTable.Name = "txtSQLTable";
+            this.txtSQLTable.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtSQLTable.ReadOnly = true;
+            this.txtSQLTable.RightBracket = ')';
+            this.txtSQLTable.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSQLTable.ShowScrollBars = false;
+            this.txtSQLTable.Size = new System.Drawing.Size(1108, 287);
+            this.txtSQLTable.TabIndex = 1;
+            this.txtSQLTable.WordWrap = true;
+            this.txtSQLTable.Zoom = 100;
             // 
             // gridData
             // 
@@ -491,9 +550,69 @@
             // 
             // lblDataCaption
             // 
+            this.lblDataCaption.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.lblDataCaption.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnDataTop0,
+            this.btnDataTop10,
+            this.btnDataTop100,
+            this.toolStripMenuItem1,
+            this.btnDataTopDouble,
+            this.btnDataTopTriple,
+            this.btnDataTopHalf});
+            this.lblDataCaption.Image = ((System.Drawing.Image)(resources.GetObject("lblDataCaption.Image")));
+            this.lblDataCaption.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.lblDataCaption.Name = "lblDataCaption";
-            this.lblDataCaption.Size = new System.Drawing.Size(49, 29);
+            this.lblDataCaption.Size = new System.Drawing.Size(67, 29);
             this.lblDataCaption.Text = "Data";
+            this.lblDataCaption.DropDownOpening += new System.EventHandler(this.lblDataCaption_DropDownOpening);
+            this.lblDataCaption.Click += new System.EventHandler(this.lblDataCaption_Click);
+            // 
+            // btnDataTop0
+            // 
+            this.btnDataTop0.Name = "btnDataTop0";
+            this.btnDataTop0.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTop0.Text = "No Limit";
+            this.btnDataTop0.Click += new System.EventHandler(this.btnDataTop0_Click);
+            // 
+            // btnDataTop10
+            // 
+            this.btnDataTop10.Name = "btnDataTop10";
+            this.btnDataTop10.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTop10.Text = "TOP 10";
+            this.btnDataTop10.Click += new System.EventHandler(this.btnDataTop10_Click);
+            // 
+            // btnDataTop100
+            // 
+            this.btnDataTop100.Name = "btnDataTop100";
+            this.btnDataTop100.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTop100.Text = "TOP 100";
+            this.btnDataTop100.Click += new System.EventHandler(this.btnDataTop100_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(178, 6);
+            // 
+            // btnDataTopDouble
+            // 
+            this.btnDataTopDouble.Name = "btnDataTopDouble";
+            this.btnDataTopDouble.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTopDouble.Text = "Double";
+            this.btnDataTopDouble.Click += new System.EventHandler(this.btnDataTopDouble_Click);
+            // 
+            // btnDataTopTriple
+            // 
+            this.btnDataTopTriple.Name = "btnDataTopTriple";
+            this.btnDataTopTriple.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTopTriple.Text = "Tripple";
+            this.btnDataTopTriple.Click += new System.EventHandler(this.btnDataTopTriple_Click);
+            // 
+            // btnDataTopHalf
+            // 
+            this.btnDataTopHalf.Name = "btnDataTopHalf";
+            this.btnDataTopHalf.Size = new System.Drawing.Size(181, 34);
+            this.btnDataTopHalf.Text = "Half";
+            this.btnDataTopHalf.Click += new System.EventHandler(this.btnDataTopHalf_Click);
             // 
             // cbDataSet
             // 
@@ -534,7 +653,6 @@
             // 
             this.bindingNavigatorPositionItem.AccessibleName = "Position";
             this.bindingNavigatorPositionItem.AutoSize = false;
-            this.bindingNavigatorPositionItem.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
             this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(73, 31);
             this.bindingNavigatorPositionItem.Text = "0";
@@ -629,10 +747,9 @@
             // btnSaveCell
             // 
             this.btnSaveCell.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSaveCell.Image = global::DBMapper.Properties.Resources.disk_blue;
             this.btnSaveCell.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveCell.Name = "btnSaveCell";
-            this.btnSaveCell.Size = new System.Drawing.Size(34, 28);
+            this.btnSaveCell.Size = new System.Drawing.Size(34, 4);
             this.btnSaveCell.Text = "Save current cell to file";
             this.btnSaveCell.Click += new System.EventHandler(this.btnSaveCell_Click);
             // 
@@ -712,7 +829,6 @@
             this.txtDataField.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDataField.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDataField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDataField.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDataField.IsReplaceMode = false;
             this.txtDataField.Location = new System.Drawing.Point(0, 26);
             this.txtDataField.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -740,6 +856,7 @@
             // pageDataScript
             // 
             this.pageDataScript.Controls.Add(this.containerDsScriptWhere);
+            this.pageDataScript.Controls.Add(this.toolStripDsScript);
             this.pageDataScript.Location = new System.Drawing.Point(4, 29);
             this.pageDataScript.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pageDataScript.Name = "pageDataScript";
@@ -752,7 +869,7 @@
             // containerDsScriptWhere
             // 
             this.containerDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.containerDsScriptWhere.Location = new System.Drawing.Point(4, 5);
+            this.containerDsScriptWhere.Location = new System.Drawing.Point(4, 39);
             this.containerDsScriptWhere.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.containerDsScriptWhere.Name = "containerDsScriptWhere";
             // 
@@ -763,7 +880,7 @@
             // containerDsScriptWhere.Panel2
             // 
             this.containerDsScriptWhere.Panel2.Controls.Add(this.txtDsScriptWhere);
-            this.containerDsScriptWhere.Size = new System.Drawing.Size(1106, 233);
+            this.containerDsScriptWhere.Size = new System.Drawing.Size(1106, 199);
             this.containerDsScriptWhere.SplitterDistance = 263;
             this.containerDsScriptWhere.SplitterWidth = 6;
             this.containerDsScriptWhere.TabIndex = 0;
@@ -780,7 +897,7 @@
             this.listDsScriptWhere.Location = new System.Drawing.Point(0, 0);
             this.listDsScriptWhere.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listDsScriptWhere.Name = "listDsScriptWhere";
-            this.listDsScriptWhere.Size = new System.Drawing.Size(263, 233);
+            this.listDsScriptWhere.Size = new System.Drawing.Size(263, 199);
             this.listDsScriptWhere.TabIndex = 0;
             this.listDsScriptWhere.UseCompatibleStateImageBehavior = false;
             this.listDsScriptWhere.View = System.Windows.Forms.View.Details;
@@ -818,7 +935,6 @@
             this.txtDsScriptWhere.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDsScriptWhere.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDsScriptWhere.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDsScriptWhere.IsReplaceMode = false;
             this.txtDsScriptWhere.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtDsScriptWhere.LeftBracket = '(';
@@ -828,9 +944,46 @@
             this.txtDsScriptWhere.Paddings = new System.Windows.Forms.Padding(0);
             this.txtDsScriptWhere.RightBracket = ')';
             this.txtDsScriptWhere.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDsScriptWhere.Size = new System.Drawing.Size(837, 233);
+            this.txtDsScriptWhere.Size = new System.Drawing.Size(837, 199);
             this.txtDsScriptWhere.TabIndex = 0;
             this.txtDsScriptWhere.Zoom = 100;
+            // 
+            // toolStripDsScript
+            // 
+            this.toolStripDsScript.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.toolStripDsScript.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnDsScriptFieldsSelectAll,
+            this.btnDsScriptFieldsSelectReverse,
+            this.btnDsScriptSave});
+            this.toolStripDsScript.Location = new System.Drawing.Point(4, 5);
+            this.toolStripDsScript.Name = "toolStripDsScript";
+            this.toolStripDsScript.Size = new System.Drawing.Size(1106, 34);
+            this.toolStripDsScript.TabIndex = 1;
+            this.toolStripDsScript.Text = "toolStrip1";
+            // 
+            // btnDsScriptFieldsSelectAll
+            // 
+            this.btnDsScriptFieldsSelectAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDsScriptFieldsSelectAll.Name = "btnDsScriptFieldsSelectAll";
+            this.btnDsScriptFieldsSelectAll.Size = new System.Drawing.Size(137, 29);
+            this.btnDsScriptFieldsSelectAll.Text = "Select All Fields";
+            this.btnDsScriptFieldsSelectAll.Click += new System.EventHandler(this.btnDsScriptFieldsSelectAll_Click);
+            // 
+            // btnDsScriptFieldsSelectReverse
+            // 
+            this.btnDsScriptFieldsSelectReverse.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDsScriptFieldsSelectReverse.Name = "btnDsScriptFieldsSelectReverse";
+            this.btnDsScriptFieldsSelectReverse.Size = new System.Drawing.Size(202, 29);
+            this.btnDsScriptFieldsSelectReverse.Text = "Reverse Fields Selection";
+            this.btnDsScriptFieldsSelectReverse.Click += new System.EventHandler(this.btnDsScriptFieldsSelectReverse_Click);
+            // 
+            // btnDsScriptSave
+            // 
+            this.btnDsScriptSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDsScriptSave.Name = "btnDsScriptSave";
+            this.btnDsScriptSave.Size = new System.Drawing.Size(103, 29);
+            this.btnDsScriptSave.Text = "Save Script";
+            this.btnDsScriptSave.Click += new System.EventHandler(this.btnDsScriptSave_Click);
             // 
             // splitContainer1
             // 
@@ -853,55 +1006,6 @@
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
             // 
-            // pageTable
-            // 
-            this.pageTable.Controls.Add(this.txtSQLTable);
-            this.pageTable.Location = new System.Drawing.Point(4, 29);
-            this.pageTable.Name = "pageTable";
-            this.pageTable.Padding = new System.Windows.Forms.Padding(3);
-            this.pageTable.Size = new System.Drawing.Size(1114, 293);
-            this.pageTable.TabIndex = 3;
-            this.pageTable.Text = "SQLTable";
-            this.pageTable.UseVisualStyleBackColor = true;
-            // 
-            // txtSQLTable
-            // 
-            this.txtSQLTable.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.txtSQLTable.AutoIndentCharsPatterns = "";
-            this.txtSQLTable.AutoScrollMinSize = new System.Drawing.Size(0, 22);
-            this.txtSQLTable.BackBrush = null;
-            this.txtSQLTable.CharHeight = 22;
-            this.txtSQLTable.CharWidth = 12;
-            this.txtSQLTable.CommentPrefix = "--";
-            this.txtSQLTable.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtSQLTable.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.txtSQLTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSQLTable.IsReplaceMode = false;
-            this.txtSQLTable.Language = FastColoredTextBoxNS.Language.SQL;
-            this.txtSQLTable.LeftBracket = '(';
-            this.txtSQLTable.Location = new System.Drawing.Point(3, 3);
-            this.txtSQLTable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.txtSQLTable.Name = "txtSQLTable";
-            this.txtSQLTable.Paddings = new System.Windows.Forms.Padding(0);
-            this.txtSQLTable.ReadOnly = true;
-            this.txtSQLTable.RightBracket = ')';
-            this.txtSQLTable.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtSQLTable.ShowScrollBars = false;
-            this.txtSQLTable.Size = new System.Drawing.Size(1108, 287);
-            this.txtSQLTable.TabIndex = 1;
-            this.txtSQLTable.WordWrap = true;
-            this.txtSQLTable.Zoom = 100;
-            // 
             // DataObjectView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -921,6 +1025,8 @@
             this.pageFields.ResumeLayout(false);
             this.pageCode.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtResult)).EndInit();
+            this.pageTable.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtSQLTable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sourceData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).EndInit();
@@ -936,17 +1042,18 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtDataField)).EndInit();
             this.pageDataScript.ResumeLayout(false);
+            this.pageDataScript.PerformLayout();
             this.containerDsScriptWhere.Panel1.ResumeLayout(false);
             this.containerDsScriptWhere.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.containerDsScriptWhere)).EndInit();
             this.containerDsScriptWhere.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txtDsScriptWhere)).EndInit();
+            this.toolStripDsScript.ResumeLayout(false);
+            this.toolStripDsScript.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.pageTable.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.txtSQLTable)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -985,7 +1092,6 @@
         private FastColoredTextBoxNS.FastColoredTextBox txtObjScript2;
         private FastColoredTextBoxNS.DocumentMap mapObjScript;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ToolStripLabel lblDataCaption;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private FastColoredTextBoxNS.FastColoredTextBox txtDataField;
         private System.Windows.Forms.ToolStripComboBox cbTextType;
@@ -1007,5 +1113,17 @@
         private System.Windows.Forms.ColumnHeader columnKeys;
         private System.Windows.Forms.TabPage pageTable;
         private FastColoredTextBoxNS.FastColoredTextBox txtSQLTable;
+        private System.Windows.Forms.ToolStrip toolStripDsScript;
+        private System.Windows.Forms.ToolStripButton btnDsScriptFieldsSelectAll;
+        private System.Windows.Forms.ToolStripButton btnDsScriptFieldsSelectReverse;
+        private System.Windows.Forms.ToolStripButton btnDsScriptSave;
+        private System.Windows.Forms.ToolStripDropDownButton lblDataCaption;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTop0;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTop10;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTop100;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTopDouble;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTopTriple;
+        private System.Windows.Forms.ToolStripMenuItem btnDataTopHalf;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     }
 }
