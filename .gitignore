@@ -9,3 +9,5 @@
 /dbMapper/dbMapper.csproj.vspscc
 /dbMapper/dbMapper.csproj.user
 /Archive
+/.vs
+*.vssscc
