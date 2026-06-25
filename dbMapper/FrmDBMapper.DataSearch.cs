@@ -218,8 +218,10 @@ namespace DBMapper
 
         public DataSearchOptions getSearchOptionsFromUI()
         {
-            var delimetertype = string.IsNullOrEmpty(cbDsColType.Text) ||
-                DataSearchColumn.DataTypes_String.IndexOf(cbDsColType.Text.ToLower()) >= 0 || DataSearchColumn.DataTypes_Datetime.IndexOf(cbDsColType.Text.ToLower()) >= 0;
+            var delimitertype = string.IsNullOrEmpty(cbDsColType.Text) ||
+                DataSearchColumn.DataTypes_String.IndexOf(cbDsColType.Text.ToLower()) >= 0 || 
+                DataSearchColumn.DataTypes_Datetime.IndexOf(cbDsColType.Text.ToLower()) >= 0 ||
+                DataSearchColumn.DataTypes_TimeSpan.IndexOf(cbDsColType.Text.ToLower()) >= 0;
             
             var options = new DataSearchOptions
             {
@@ -261,7 +263,7 @@ namespace DBMapper
                 CompareContent = new CompareValue
                 {
                     Name = "Content",
-                    HasDelimeter = delimetertype,
+                    HasDelimeter = delimitertype,
                     NOT = chkDsNOTContent.Checked,
                     Compare = (CompareType)cbDsContent.SelectedIndex,
                     Value = cbDsValueContent.Text

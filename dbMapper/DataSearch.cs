@@ -217,7 +217,8 @@ order by s.name, o.type, o.name, c.column_id";
         public static readonly List<string> NotLikeableTypes = new List<string> { "geography", "geometry", "xml" };
 
         public const string DataTypes_String = "char, varchar, text, nchar, nvarchar, ntext, xml, uniqueidentifier";
-        public const string DataTypes_Datetime = "date, datetimeoffset, datetime2, smalldatetime, datetime, time";
+        public const string DataTypes_Datetime = "date, datetime2, smalldatetime, datetime";
+        public const string DataTypes_TimeSpan = "datetimeoffset, time";
         public const string DataTypes_Numbers = "bigint, numeric, bit, smallint, decimal, smallmoney, int, tinyint, money, float, real";
         public const string DataTypes_Binary = "cursor, timestamp, hierarchyid, sql_variant, table, geometry, geography, binary, varbinary, image";
         /*
@@ -230,9 +231,9 @@ order by s.name, o.type, o.name, c.column_id";
         {
             get { return !NotLikeableTypes.Contains(TypeName); }
         }
-        public bool HasDelimeter
+        public bool HasDelimiter
         {
-            get { return (DataTypes_String + DataTypes_Datetime).IndexOf(TypeName) >= 0; }
+            get { return (DataTypes_String + DataTypes_Datetime + DataTypes_TimeSpan).IndexOf(TypeName) >= 0; }
         }
     }
     public class DataSearchObject
@@ -349,8 +350,8 @@ order by s.name, o.type, o.name, c.column_id";
         public string BuildContentQuery(DataSearchColumn column, string tableAlias = "", string linkOperator="")
         {
             //TODO: check delimeter
-            Options.CompareContent.HasDelimeter = Options.CompareContent.Compare == CompareType.Like || column.HasDelimeter ||
-            !Options.CompareContent.Value.IsNumber() || column.HasDelimeter;
+            Options.CompareContent.HasDelimeter = Options.CompareContent.Compare == CompareType.Like || column.HasDelimiter ||
+            !Options.CompareContent.Value.IsNumber() || column.HasDelimiter;
 
             return Options.CompareContent.Compare == CompareType.Like && !column.IsLikeable
                 ? ""

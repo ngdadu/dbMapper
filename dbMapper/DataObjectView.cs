@@ -346,151 +346,164 @@ namespace DBMapper
                                     tableData.TableName = string.IsNullOrWhiteSpace(tableSchemaName) ? tableName : $"{tableSchemaName}.{tableName}";
                                 }
                                 dataTables.Add(tableData);
-                                foreach (DataRow row in table.Rows)
+                                listDsScriptWhere_Suspended = true;
+                                try
                                 {
-                                    var cname = row["ColumnName"].ToString();
-                                    var dcname = cname;
-                                    int dccount = 0;
-                                    while (tableData.Columns.Contains(dcname))
+                                    foreach (DataRow row in table.Rows)
                                     {
-                                        dcname = String.Format("{0}__DUP{1}", cname, ++dccount);
-                                    }
-                                    if (dccount > 0)
-                                    {
-                                        columnErrors.Add(String.Format("Column {0} exists already in dataset {1}: renamed to {2}", cname, resultset, dcname));
-                                        cname = dcname;
-                                    }
-                                    var columnData = new DataColumn(dcname);
-                                    var sqltype = row["DataTypeName"].ToString();
-                                    var sqlbasetype = sqltype;
-                                    var tname = sqltype.ToLower();
-                                    string nullableSuffix = "?";
-                                    int csize = -1;
-                                    switch (tname)
-                                    {
-                                        case "char":
-                                        case "varchar":
-                                        case "nvarchar":
-                                            csize = (int)row["ColumnSize"];
-                                            if (csize >= 0x7FFFFFFF) csize = -1;
-                                            sqltype = String.Format("{0}({1})", sqltype, csize < 0 ? "max" : csize.ToString());
-                                            goto case "text";
-                                        case "text":
-                                        case "ntext":
-                                        case "xml":
-                                            tname = "string";
-                                            columnData.DataType = typeof(string);
-                                            nullableSuffix = "";
-                                            break;
-                                        case "money":
-                                            tname = "decimal";
-                                            columnData.DataType = typeof(decimal);
-                                            break;
-                                        case "image":
-                                        case "binary":
-                                        case "varbinary":
-                                            tname = "byte[]";
-                                            columnData.DataType = typeof(byte[]);
-                                            nullableSuffix = "";
-                                            break;
-                                        case "timestamp":
-                                            tname = "byte[]";
-                                            columnData.DataType = typeof(object);
-                                            nullableSuffix = "";
-                                            break;
-                                        case "bigint":
-                                            tname = "long";
-                                            columnData.DataType = typeof(long);
-                                            break;
-                                        case "smallint":
-                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                            tname = "short";
-                                            columnData.DataType = typeof(short);
-                                            break;
-                                        case "tinyint":
-                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                            tname = "byte";
-                                            columnData.DataType = typeof(byte);
-                                            break;
-                                        case "int":
-                                            if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
-                                            columnData.DataType = typeof(Int32);
-                                            break;
-                                        case "bit":
-                                            tname = "bool";
-                                            columnData.DataType = typeof(bool);
-                                            break;
-                                        case "uniqueidentifier":
-                                            tname = "Guid";
-                                            columnData.DataType = typeof(Guid);
-                                            break;
-                                        case "datetime":
-                                        case "date":
-                                        case "time":
-                                            tname = "DateTime";
-                                            columnData.DataType = typeof(DateTime);
-                                            break;
-                                    }
-                                    bool canNull = (bool)row["AllowDBNull"];
-                                    columnData.AllowDBNull = canNull;
-                                    tname += canNull ? nullableSuffix : "";
-                                    var item = new ListViewItem(cname);
-                                    columnNames.Add(cname);
-                                    if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        item.BackColor = SystemColors.Info;
-                                        item.ForeColor = SystemColors.InfoText;
-                                    }
-                                    item.SubItems.Add(tname);
-                                    item.SubItems.Add(canNull ? "" : "x");
-                                    item.SubItems.Add((++columnOrder).ToString());
-                                    item.SubItems.Add(sqltype);
-                                    string keys = null;
-                                    if (fieldKeys != null && fieldKeys.ContainsKey(cname))
-                                    {
-                                        if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
-                                        keys = string.Join(", ", fieldKeys[cname]);
-                                        item.SubItems.Add(keys);
-                                        keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
-                                    }
-                                    string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
-                                    string descr = null;
-                                    if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
-                                    {
-                                        if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
-                                        descr = fieldDescriptions[cname];
-                                        item.SubItems.Add(descr);
-                                        cCode = String.Format(@"
+                                        var cname = row["ColumnName"].ToString();
+                                        var dcname = cname;
+                                        int dccount = 0;
+                                        while (tableData.Columns.Contains(dcname))
+                                        {
+                                            dcname = String.Format("{0}__DUP{1}", cname, ++dccount);
+                                        }
+                                        if (dccount > 0)
+                                        {
+                                            columnErrors.Add(String.Format("Column {0} exists already in dataset {1}: renamed to {2}", cname, resultset, dcname));
+                                            cname = dcname;
+                                        }
+                                        var columnData = new DataColumn(dcname);
+                                        var sqltype = row["DataTypeName"].ToString();
+                                        var sqlbasetype = sqltype;
+                                        var tname = sqltype.ToLower();
+                                        string nullableSuffix = "?";
+                                        int csize = -1;
+                                        switch (tname)
+                                        {
+                                            case "char":
+                                            case "varchar":
+                                            case "nvarchar":
+                                                csize = (int)row["ColumnSize"];
+                                                if (csize >= 0x7FFFFFFF) csize = -1;
+                                                sqltype = String.Format("{0}({1})", sqltype, csize < 0 ? "max" : csize.ToString());
+                                                goto case "text";
+                                            case "text":
+                                            case "ntext":
+                                            case "xml":
+                                                tname = "string";
+                                                columnData.DataType = typeof(string);
+                                                nullableSuffix = "";
+                                                break;
+                                            case "money":
+                                                tname = "decimal";
+                                                columnData.DataType = typeof(decimal);
+                                                break;
+                                            case "image":
+                                            case "binary":
+                                            case "varbinary":
+                                                tname = "byte[]";
+                                                columnData.DataType = typeof(byte[]);
+                                                nullableSuffix = "";
+                                                break;
+                                            case "timestamp":
+                                                tname = "byte[]";
+                                                columnData.DataType = typeof(object);
+                                                nullableSuffix = "";
+                                                break;
+                                            case "bigint":
+                                                tname = "long";
+                                                columnData.DataType = typeof(long);
+                                                break;
+                                            case "smallint":
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                tname = "short";
+                                                columnData.DataType = typeof(short);
+                                                break;
+                                            case "tinyint":
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                tname = "byte";
+                                                columnData.DataType = typeof(byte);
+                                                break;
+                                            case "int":
+                                                if (cname.StartsWith("flag_", StringComparison.OrdinalIgnoreCase)) goto case "bit";
+                                                columnData.DataType = typeof(Int32);
+                                                break;
+                                            case "bit":
+                                                tname = "bool";
+                                                columnData.DataType = typeof(bool);
+                                                break;
+                                            case "uniqueidentifier":
+                                                tname = "Guid";
+                                                columnData.DataType = typeof(Guid);
+                                                break;
+                                            case "smalldatetime":
+                                            case "datetime":
+                                            case "datetime2":
+                                            case "date":
+                                                tname = "DateTime";
+                                                columnData.DataType = typeof(DateTime);
+                                                break;
+                                            case "time":
+                                                tname = "TimeSpan";
+                                                columnData.DataType = typeof(TimeSpan);
+                                                break;
+                                        }
+                                        bool canNull = (bool)row["AllowDBNull"];
+                                        columnData.AllowDBNull = canNull;
+                                        tname += canNull ? nullableSuffix : "";
+                                        var item = new ListViewItem(cname);
+                                        columnNames.Add(cname);
+                                        if (!String.IsNullOrEmpty(fulltextSearch) && cname.IndexOf(fulltextSearch, StringComparison.OrdinalIgnoreCase) >= 0)
+                                        {
+                                            item.BackColor = SystemColors.Info;
+                                            item.ForeColor = SystemColors.InfoText;
+                                        }
+                                        item.SubItems.Add(tname);
+                                        item.SubItems.Add(canNull ? "" : "x");
+                                        item.SubItems.Add((++columnOrder).ToString());
+                                        item.SubItems.Add(sqltype);
+                                        string keys = null;
+                                        if (fieldKeys != null && fieldKeys.ContainsKey(cname))
+                                        {
+                                            if ((bool)row["IsIdentity"]) fieldKeys[cname].Add("I");
+                                            keys = string.Join(", ", fieldKeys[cname]);
+                                            item.SubItems.Add(keys);
+                                            keys = $"{spaces.Substring(0, Math.Max(4, spaces.Length - tname.Length - cname.Length))} // {keys}";
+                                        }
+                                        string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
+                                        string descr = null;
+                                        if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
+                                        {
+                                            if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
+                                            descr = fieldDescriptions[cname];
+                                            item.SubItems.Add(descr);
+                                            cCode = String.Format(@"
 
 /// <summary>
 /// {0}
 /// </summary>
 {1}", descr, cCode);
-                                    }
-                                    if (group != null) item.Group = group;
-                                    lvResult.Items.Add(item);
-                                    resultText += cCode;
-                                    item.Tag = cCode;
-                                    item.Checked = true;
+                                        }
+                                        if (group != null) item.Group = group;
+                                        lvResult.Items.Add(item);
+                                        resultText += cCode;
+                                        item.Tag = cCode;
+                                        item.Checked = true;
 
-                                    var datitem = listDsScriptWhere.Items.Add(cname);
-                                    datitem.SubItems.Add(tname);
-                                    datitem.Tag = new DataSearchColumn
-                                    {
-                                        Name = cname,
-                                        TypeName = sqlbasetype,
-                                        MaxLength = csize,
-                                        Index = datitem.Index + 1,
-                                        RowsCount = -1
-                                    };
-                                    try
-                                    {
-                                        tableData.Columns.Add(columnData);
+                                        var datitem = listDsScriptWhere.Items.Add(cname);
+                                        datitem.SubItems.Add(tname);
+                                        datitem.Tag = new DataSearchColumn
+                                        {
+                                            Name = cname,
+                                            TypeName = sqlbasetype,
+                                            MaxLength = csize,
+                                            Index = datitem.Index + 1,
+                                            RowsCount = -1
+                                        };
+                                        try
+                                        {
+                                            tableData.Columns.Add(columnData);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            if (dccount > 0) columnErrors.Add(String.Format("Column-Error {0} in dataset {1}: {2}", columnData.ColumnName, resultset, ex.Message));
+                                        }
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        if (dccount > 0) columnErrors.Add(String.Format("Column-Error {0} in dataset {1}: {2}", columnData.ColumnName, resultset, ex.Message));
-                                    }
+                                }
+                                finally
+                                {
+                                    listDsScriptWhere_Suspended = false;
                                 }
                                 while (reader.Read())
                                 {
@@ -1024,10 +1037,12 @@ namespace DBMapper
             {
                 return "";
             }
+            var maxColLength = columns.Max(c => c.Name.Length);
             var columnsheader = string.Join("\r\n    ,", columns
                 .OrderBy(c => c.Index)
-                .Select(c => c.Name + " \t" + c.FullTypeName + "\t -- #" + c.Index)
+                .Select(c => c.Name.PadRight(maxColLength) + " \t" + c.FullTypeName + "\t -- #" + c.Index)
                 .ToArray());
+            var columnNames = string.Join(", ", columns.OrderBy(c => c.Index).Select(c => c.Name));
             var colValues = new string[columns.Count];
             var rowValues = new List<string>();
             string tableName = GetTableName(table);
@@ -1035,7 +1050,7 @@ namespace DBMapper
             {
                 if (row % 1000 == 0)
                 {
-                    rowValues.Add($"insert into @{tableName} values");
+                    rowValues.Add($"INSERT INTO @{tableName} ({columnNames}) VALUES");
                 }
                 var datarow = table.Rows[row];
                 for (var col = 0; col < columns.Count; col++)
@@ -1048,7 +1063,11 @@ namespace DBMapper
                     }
                     else if (value is DateTime || value is DateTime?)
                     {
-                        colValues[col] = string.Format("CONVERT(DATETIME, '{0:yyy-MM-ddTHH:mm:ss.fff}', 126)", value);
+                        colValues[col] = $"CONVERT({column.FullTypeName}, '{value:yyy-MM-ddTHH:mm:ss.fff}', 126)";
+                    }
+                    else if (value is TimeSpan ts)
+                    {
+                        colValues[col] = $"CONVERT({column.FullTypeName}, '{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds}')";
                     }
                     else if (value is byte[])
                     {
@@ -1068,9 +1087,9 @@ namespace DBMapper
                     else
                     {
                         var sb = new StringBuilder();
-                        var delim = column.HasDelimeter ? "'" : "";
+                        var delim = column.HasDelimiter ? "'" : "";
                         var unicodePrefix = value is string ? "N" : "";
-                        if (column.HasDelimeter)
+                        if (column.HasDelimiter)
                         {
                             var chars = value.ToString().ToCharArray();
                             for (var chi = 0; chi < chars.Length; chi++)
@@ -1103,16 +1122,18 @@ namespace DBMapper
                 }
                 rowValues.Add((row % 1000 == 0 ? "     " : "    ,") + "(" + string.Join(", ", colValues) + ")" + (row < table.Rows.Count - 1 && (row + 1) % 1000 == 0 ? ";" : ""));
             }
-            return $@"declare @{tableName} table
+            return $@"DECLARE @{tableName} TABLE
 (
      {columnsheader}
 );
-{string.Join("\r\n", rowValues)};";
+{string.Join("\r\n", rowValues)};
+
+SELECT * FROM @{tableName};";
         }
 
         public static string GetTableName(DataTable table)
         {
-            var tableName = (table.TableName ?? "").Trim().Replace("[", "").Replace("]", "").Replace(" ", "");
+            var tableName = (table?.TableName ?? "").Trim().Replace("[", "").Replace("]", "").Replace(" ", "");
             tableName = Regex.Replace(tableName, "\\W", "_");
             if (string.IsNullOrEmpty(tableName)) tableName = "parameters";
             return tableName;

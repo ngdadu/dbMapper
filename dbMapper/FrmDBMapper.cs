@@ -129,8 +129,12 @@ namespace DBMapper
             cbDsSchema.SelectedIndex = cbDsObject.SelectedIndex =
                 cbDsColName.SelectedIndex = cbDsContent.SelectedIndex = (int)CompareType.Like;
             cbDsColType.SelectedIndex = (int)CompareType.Equals;
-            foreach (var item in string.Format("{0}, {1}, {2}, {3}, ",
-                DataSearchColumn.DataTypes_String, DataSearchColumn.DataTypes_Datetime, DataSearchColumn.DataTypes_Numbers, DataSearchColumn.DataTypes_Binary)
+            foreach (var item in string.Format("{0}, {1}, {2}, {3}, {4}, ",
+                DataSearchColumn.DataTypes_String, 
+                DataSearchColumn.DataTypes_Datetime,
+                DataSearchColumn.DataTypes_TimeSpan,
+                DataSearchColumn.DataTypes_Numbers, 
+                DataSearchColumn.DataTypes_Binary)
                 .Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries).OrderBy(s => s))
                 cbDsValueColType.Items.Add(item);
         }
