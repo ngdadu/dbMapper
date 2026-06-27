@@ -99,6 +99,8 @@
             this.btnDsScriptSave = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.columnComputed = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnComputeFormula = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabMain.SuspendLayout();
             this.pageScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containerScript)).BeginInit();
@@ -209,6 +211,7 @@
             this.txtObjScript.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript.IsReplaceMode = false;
             this.txtObjScript.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript.LeftBracket = '(';
@@ -249,6 +252,7 @@
             this.txtObjScript2.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtObjScript2.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtObjScript2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtObjScript2.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtObjScript2.IsReplaceMode = false;
             this.txtObjScript2.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtObjScript2.LeftBracket = '(';
@@ -303,7 +307,9 @@
             this.coulmnFieldOrder,
             this.columnSQLType,
             this.columnKeys,
-            this.columnDescription});
+            this.columnDescription,
+            this.columnComputed,
+            this.columnComputeFormula});
             this.lvResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvResult.FullRowSelect = true;
             this.lvResult.GridLines = true;
@@ -387,6 +393,7 @@
             this.txtResult.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtResult.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtResult.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtResult.IsReplaceMode = false;
             this.txtResult.Language = FastColoredTextBoxNS.Language.CSharp;
             this.txtResult.LeftBracket = '(';
@@ -436,6 +443,7 @@
             this.txtSQLTable.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtSQLTable.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtSQLTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSQLTable.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtSQLTable.IsReplaceMode = false;
             this.txtSQLTable.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtSQLTable.LeftBracket = '(';
@@ -829,6 +837,7 @@
             this.txtDataField.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDataField.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDataField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDataField.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDataField.IsReplaceMode = false;
             this.txtDataField.Location = new System.Drawing.Point(0, 26);
             this.txtDataField.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -927,7 +936,7 @@
         '\'',
         '\''};
             this.txtDsScriptWhere.AutoIndentCharsPatterns = "";
-            this.txtDsScriptWhere.AutoScrollMinSize = new System.Drawing.Size(2, 22);
+            this.txtDsScriptWhere.AutoScrollMinSize = new System.Drawing.Size(35, 22);
             this.txtDsScriptWhere.BackBrush = null;
             this.txtDsScriptWhere.CharHeight = 22;
             this.txtDsScriptWhere.CharWidth = 12;
@@ -935,6 +944,7 @@
             this.txtDsScriptWhere.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDsScriptWhere.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtDsScriptWhere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDsScriptWhere.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtDsScriptWhere.IsReplaceMode = false;
             this.txtDsScriptWhere.Language = FastColoredTextBoxNS.Language.SQL;
             this.txtDsScriptWhere.LeftBracket = '(';
@@ -1005,6 +1015,17 @@
             this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.paintSplitter);
+            // 
+            // columnComputed
+            // 
+            this.columnComputed.Text = "Computed";
+            this.columnComputed.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnComputed.Width = 40;
+            // 
+            // columnComputeFormula
+            // 
+            this.columnComputeFormula.Text = "Formula";
+            this.columnComputeFormula.Width = 160;
             // 
             // DataObjectView
             // 
@@ -1125,5 +1146,7 @@
         private System.Windows.Forms.ToolStripMenuItem btnDataTopTriple;
         private System.Windows.Forms.ToolStripMenuItem btnDataTopHalf;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ColumnHeader columnComputed;
+        private System.Windows.Forms.ColumnHeader columnComputeFormula;
     }
 }

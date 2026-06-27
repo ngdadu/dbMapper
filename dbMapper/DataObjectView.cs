@@ -1,17 +1,19 @@
-﻿using System;
+﻿using FastColoredTextBoxNS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Data.SqlClient;
-using FastColoredTextBoxNS;
-using System.Xml;
-using System.IO;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Xml;
+using static DBMapper.DataObjectView;
 
 namespace DBMapper
 {
@@ -153,9 +155,21 @@ namespace DBMapper
             return csb.ToString();
         }
 
-        private Dictionary<string, string> fieldDescriptions;
+        private Dictionary<string, FieldDescription> fieldDescriptions;
 
-        public Dictionary<string, string> FieldDescriptions
+        public class FieldDescription
+        {
+            public string TableName { get; set; }
+            public string ColumnName { get; set; }
+            public string Description { get; set; }
+            public bool IsComputed { get; set; }
+            public string ComputedFormula { get; set; }
+            public string CsCode { get; set; }
+            public string GetDescriptionText(string separator = ", ") => string.Join(separator, 
+                new List<string> { Description, IsComputed ? $"Formel: {ComputedFormula}" : "" }
+                .Where(d => !string.IsNullOrEmpty(d)));
+        }
+        public Dictionary<string, FieldDescription> FieldDescriptions
         {
             get { return fieldDescriptions; }
             set
@@ -231,14 +245,35 @@ namespace DBMapper
                 {
                     try
                     {
-                        FieldDescriptions = new Dictionary<string, string>();
-                        using (var cmd = new SqlCommand("SELECT name, value FROM fn_listextendedproperty(NULL, 'schema', @schema, 'table', @name, 'column', default)", conn))
+                        FieldDescriptions = new Dictionary<string, FieldDescription>();
+                        using (var cmd = new SqlCommand(@"sELECT 
+    o.name AS TableName, 
+    c.name AS ColumnName,
+    CONVERT(nvarchar(MAX), d.value) as Description,
+    CAST(NULLIF(c.IsComputed, 0) as bit) as IsComputed,
+    cc.definition as ComputedFormula
+FROM syscolumns c
+    INNER JOIN sysobjects o ON c.id = o.id AND o.xtype = 'U' --User Tables
+    LEFT JOIN sys.computed_columns cc on cc.object_id=o.id AND cc.column_id = c.colid
+    OUTER APPLY fn_listextendedproperty(NULL, 'schema', @schema, 'table', o.name, 'column', c.name) d
+WHERE o.name=@name", conn))
                         {
                             cmd.Parameters.AddWithValue("@schema", tableSchemaName);
                             cmd.Parameters.AddWithValue("@name", tableName);
                             using (var reader = cmd.ExecuteReader())
                             {
-                                while (reader.Read()) fieldDescriptions.Add(reader[0].ToString(), reader[1].ToString());
+                                while (reader.Read())
+                                {
+                                    var colName = $"{reader[1]}";
+                                    fieldDescriptions[colName] = new FieldDescription
+                                    {
+                                        TableName = $"{reader[0]}",
+                                        ColumnName = $"{reader[1]}",
+                                        Description = $"{reader[2]}",
+                                        IsComputed = $"{reader[3]}" != "",
+                                        ComputedFormula = $"{reader[4]}"
+                                    };
+                                }
                             }
                         }
                     }
@@ -463,22 +498,28 @@ namespace DBMapper
                                         }
                                         string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
                                         string descr = null;
-                                        if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
+                                        if (fieldDescriptions != null && fieldDescriptions.TryGetValue(cname, out var field))
                                         {
                                             if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
-                                            descr = fieldDescriptions[cname];
-                                            item.SubItems.Add(descr);
-                                            cCode = String.Format(@"
-
-/// <summary>
-/// {0}
-/// </summary>
+                                            descr = field.GetDescriptionText("\r\n    ///");
+                                            if (!string.IsNullOrEmpty(descr)) cCode = String.Format(@"
+    /// <summary>
+    /// {0}
+    /// </summary>
 {1}", descr, cCode);
                                         }
+                                        else
+                                        {
+                                            field = new FieldDescription();
+                                        }
+                                        field.CsCode = cCode;
+                                        item.SubItems.Add(field.Description ?? "");
+                                        item.SubItems.Add(field.IsComputed ? "+" : "");
+                                        item.SubItems.Add(field.ComputedFormula ?? "");
                                         if (group != null) item.Group = group;
                                         lvResult.Items.Add(item);
                                         resultText += cCode;
-                                        item.Tag = cCode;
+                                        item.Tag = field;
                                         item.Checked = true;
 
                                         var datitem = listDsScriptWhere.Items.Add(cname);
@@ -489,7 +530,8 @@ namespace DBMapper
                                             TypeName = sqlbasetype,
                                             MaxLength = csize,
                                             Index = datitem.Index + 1,
-                                            RowsCount = -1
+                                            RowsCount = -1,
+                                            IsComputed = field.IsComputed
                                         };
                                         try
                                         {
@@ -665,22 +707,28 @@ namespace DBMapper
                                                 }
                                                 string cCode = String.Format("    public {0} {1} {{ get; set; }}{2}\r\n", tname, cname, keys);
                                                 string descr = null;
-                                                if (fieldDescriptions != null && fieldDescriptions.ContainsKey(cname))
+                                                if (fieldDescriptions != null && fieldDescriptions.TryGetValue(cname, out var field))
                                                 {
                                                     if (string.IsNullOrEmpty(keys) && fieldKeys != null) item.SubItems.Add("");
-                                                    descr = fieldDescriptions[cname];
-                                                    item.SubItems.Add(descr);
-                                                    cCode = String.Format(@"
-
-/// <summary>
-/// {0}
-/// </summary>
+                                                    descr = field.GetDescriptionText("\r\n    ///");
+                                                    if (!string.IsNullOrEmpty(descr)) cCode = String.Format(@"
+    /// <summary>
+    /// {0}
+    /// </summary>
 {1}", descr, cCode);
                                                 }
+                                                else
+                                                {
+                                                    field = new FieldDescription();
+                                                }
+                                                field.CsCode = cCode;
+                                                item.SubItems.Add(field.Description ?? "");
+                                                item.SubItems.Add(field.IsComputed ? "+" : "");
+                                                item.SubItems.Add(field.ComputedFormula ?? "");
                                                 if (group != null) item.Group = group;
                                                 lvResult.Items.Add(item);
                                                 resultText += cCode;
-                                                item.Tag = cCode;
+                                                item.Tag = field;
                                                 item.Checked = true;
 
                                                 var datitem = listDsScriptWhere.Items.Add(cname);
@@ -691,7 +739,8 @@ namespace DBMapper
                                                     TypeName = sqlbasetype,
                                                     MaxLength = -1,
                                                     Index = datitem.Index + 1,
-                                                    RowsCount = -1
+                                                    RowsCount = -1,
+                                                    IsComputed = field.IsComputed
                                                 };
                                                 try
                                                 {
@@ -789,7 +838,8 @@ namespace DBMapper
                 foreach (ListViewItem item in lvResult.Items)
                     if (item.Checked && item.Group == null)
                     {
-                        resultText.Append(item.Tag.ToString());
+                        var field = item.Tag as FieldDescription;
+                        resultText.Append(field?.CsCode ?? "");
                         columnNames.Add(item.Text);
                     }
                 int resultset = 0;
@@ -799,7 +849,8 @@ namespace DBMapper
                     foreach (ListViewItem groupitem in group.Items)
                         if (groupitem.Checked)
                         {
-                            groupText.Append(groupitem.Tag.ToString());
+                            var field = groupitem.Tag as FieldDescription;
+                            groupText.Append(field?.CsCode ?? "");
                             columnNames.Add(groupitem.Text);
                         }
                     if (groupText.Length > 0)
@@ -829,7 +880,13 @@ namespace DBMapper
                     ? lvResult.Items.OfType<ListViewItem>().Max(v => (v.Text ?? "").Length)
                     : 0;
                 string GetColDef(ListViewItem item)
-                    => $"{item.Text.PadRight(maxNameLength)} {item.SubItems[4].Text}{(item.SubItems[2].Text == "x" ? " NOT NULL" : "")}";
+                {
+                    var field = item.Tag as FieldDescription;
+                    var descr = string.IsNullOrEmpty(field?.Description) ? "" : $"  -- {field.Description}";
+                    return field?.IsComputed ?? false
+                        ? $"{item.Text.PadRight(maxNameLength)} AS {field.ComputedFormula}{descr}"
+                        : $"{item.Text.PadRight(maxNameLength)} {item.SubItems[4].Text}{(item.SubItems[2].Text == "x" ? " NOT NULL" : "")}{descr}";
+                }
                 foreach (ListViewItem item in lvResult.Items)
                     if (item.Checked && item.Group == null)
                     {
@@ -1040,7 +1097,9 @@ namespace DBMapper
             var maxColLength = columns.Max(c => c.Name.Length);
             var columnsheader = string.Join("\r\n    ,", columns
                 .OrderBy(c => c.Index)
-                .Select(c => c.Name.PadRight(maxColLength) + " \t" + c.FullTypeName + "\t -- #" + c.Index)
+                .Select(c => c.Name.PadRight(maxColLength) + " \t" + 
+                    c.FullTypeName.Replace("timestamp", "varbinary(MAX)") + 
+                    $"\t -- #{c.Index}{(c.IsComputed ? " computed" : "")}")
                 .ToArray());
             var columnNames = string.Join(", ", columns.OrderBy(c => c.Index).Select(c => c.Name));
             var colValues = new string[columns.Count];
@@ -1145,7 +1204,7 @@ SELECT * FROM @{tableName};";
             listDsScriptWhere_Suspended = true;
             try
             {
-                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = true;
+                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = !((item.Tag as DataSearchColumn)?.IsComputed ?? false);
             }
             finally
             {
@@ -1159,7 +1218,7 @@ SELECT * FROM @{tableName};";
             listDsScriptWhere_Suspended = true;
             try
             {
-                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = !item.Checked;
+                foreach (ListViewItem item in listDsScriptWhere.Items) item.Checked = !((item.Tag as DataSearchColumn)?.IsComputed ?? false) && !item.Checked;
             }
             finally
             {

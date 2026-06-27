@@ -202,6 +202,7 @@ order by s.name, o.type, o.name, c.column_id";
         public string TypeName { get; set; }
         public int RowsCount { get; set; }
         public int MaxLength { get; set; }
+        public bool IsComputed { get; set; }
 
         public bool IsNumber { get { return DataTypes_Numbers.Contains(TypeName); } }
 
